@@ -11,18 +11,18 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  width: 100dvw;
+  height: 100dvh;
 }
-
-
 
 body {
   margin: 0;
   display: flex;
   place-items: center;
-  min-height: 100dvh;
+  width: 100dvw;
+  height: 100dvh;
 }
-
-
 
 @media (prefers-color-scheme: light) {
   :root {

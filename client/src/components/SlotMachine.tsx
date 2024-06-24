@@ -32,7 +32,7 @@ export const SlotMachine = () => {
   }, [assets, columns]);
 
   const windowWidth = window.innerWidth;
-  const windowHeight = window.innerHeight;
+
   return (
     <div className="w-full h-full flex flex-col justify-center items-center gap-5">
       <div>
@@ -55,6 +55,7 @@ export const SlotMachine = () => {
                   y={index * windowWidth * 0.1}
                   width={windowWidth * 0.1}
                   height={windowWidth * 0.1}
+                  
                 />
               ))}
             </Container>
@@ -62,19 +63,29 @@ export const SlotMachine = () => {
         </Stage>
       </div>
 
-      <div className="flex gap-4">
+      <div className="w-full flex gap-[10%] justify-center items-center">
         <div className="flex gap-4 text-2xl">
-          <button>-</button>
-          
-          <p className="flex flex-col">
-            <span>500</span>
-            <span>total bet</span>
-          </p>
-          
-          <button>+</button>
+          <button className="border-slate-200 border-2 py-[8%] px-4 rounded-tl-lg rounded-bl-lg">
+            -
+          </button>
+          <div className="flex flex-col justify-center">
+            <p className="text-2xl">500</p>
+            <p className="text-xl uppercase text-center">total bet</p>
+          </div>
+          <button className="border-slate-200 border-2 py-[8%] px-4 rounded-tr-lg rounded-br-lg">
+            +
+          </button>
         </div>
 
-        <button>Spin</button>
+        <div className="uppercase flex flex-col gap-4">
+          <p>0</p>
+          <p>win</p>
+        </div>
+
+        <button className="uppercase">
+          <p>Spin</p>
+          <p>hold for auto</p>
+        </button>
       </div>
     </div>
   );
