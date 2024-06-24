@@ -91,7 +91,7 @@ export const SlotMachine = () => {
         </div>
 
         <div className="uppercase flex flex-col gap-4">
-          <p>0</p>
+          <p className="font-bold text-2xl">0</p>
           <p>win</p>
                 </div>
 
