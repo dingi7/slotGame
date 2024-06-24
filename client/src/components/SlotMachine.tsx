@@ -1,15 +1,7 @@
-import * as PIXI from "pixi.js";
-
 import { Container, Sprite, Stage } from "@pixi/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // Define asset URLs
-const assets = [
-  "https://pixijs.com/assets/eggHead.png",
-  "https://pixijs.com/assets/flowerTop.png",
-  "https://pixijs.com/assets/helmlok.png",
-  "https://pixijs.com/assets/skully.png",
-];
 
 export const SlotMachine = () => {
   const [assets, setAssets] = useState([
