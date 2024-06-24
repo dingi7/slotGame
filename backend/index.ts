@@ -1,4 +1,4 @@
-import { play } from "./slotLogic";
+import { play } from "./slotMachine/slotLogic";
 
 function simulate(plays: number, betAmount: number): number {
     let totalBet = 0;
