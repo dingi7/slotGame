@@ -67,20 +67,20 @@ export const SlotMachine: React.FC = () => {
 
   const windowWidth = window.innerWidth;
 
-  const handleBetAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = Number(e.target.value);
+  //   const handleBetAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //     const newValue = Number(e.target.value);
 
-    if (isNaN(newValue) || !isFinite(newValue)) {
-      return;
-    }
-    // Set the bet amount directly if the current state is 0
-    if (betAmount === 0) {
-      setBetAmount(newValue);
-    } else {
-      // You can implement additional logic here if needed
-      setBetAmount(newValue);
-    }
-  };
+  //     if (isNaN(newValue) || !isFinite(newValue)) {
+  //       return;
+  //     }
+  //     // Set the bet amount directly if the current state is 0
+  //     if (betAmount === 0) {
+  //       setBetAmount(newValue);
+  //     } else {
+  //       // You can implement additional logic here if needed
+  //       setBetAmount(newValue);
+  //     }
+  //   };
 
   const drawRect = (graphics: PIXI.Graphics) => {
     const rectWidth =
@@ -100,21 +100,16 @@ export const SlotMachine: React.FC = () => {
       5
     );
     graphics.endFill();
-    
   };
-
-
 
   return (
     <div
       className={`w-full h-full flex flex-col justify-center items-center gap-5 bg-[url(${slotBackground})] text-white overflow-hidden`}
       style={{ backgroundImage: `url(${slotBackground})` }}
     >
-      <div className="flex gap-4">
-        <p className="uppercase text-lg">
-          <span className="relative inline-block">
-            <span className="text-yellow-400">slot machine</span>
-          </span>
+      <div className="flex gap-4 pt-[2%]">
+        <p className="uppercase text-yellow-400 text-2xl font-semibold text-shadow-superhot">
+          slot machine
         </p>
       </div>
 
@@ -123,15 +118,15 @@ export const SlotMachine: React.FC = () => {
           options={{
             backgroundAlpha: 0,
           }}
-          width={windowWidth >= 768 ? windowWidth * 0.36 : windowWidth * 0.9}
-          height={windowWidth >= 768 ? windowWidth * 0.32 : windowWidth * 0.8}
+          width={windowWidth >= 768 ? windowWidth * 0.31 : windowWidth * 0.9}
+          height={windowWidth >= 768 ? windowWidth * 0.3 : windowWidth * 0.8}
         >
           {assetsMatrix.map((column, index) => (
             <Container
               x={
                 windowWidth >= 768
-                  ? (index !== 0 ? index : 0.1) * windowWidth * 0.13
-                  : (index !== 0 ? index : 0.1) * windowWidth * 0.32
+                  ? index * windowWidth * 0.11
+                  : index * windowWidth * 0.32
               }
             >
               <Graphics draw={(g: PIXI.Graphics) => drawRect(g)} />
@@ -185,20 +180,25 @@ export const SlotMachine: React.FC = () => {
           </button>
         </div> */}
 
-        <div className="flex gap-4">
-          {fixedBetAmounts.map((x) => (
-            <div
-              className={`border-slate-200 border-2 px-4 py-2 rounded-md cursor-pointer shadow shadow-slate-500  ${
-                betAmount === x ? "bg-green-500" : "bg-stone-600"
-              }`}
-              onClick={() => setBetAmount(x)}
-            >
-              <p className="flex gap-[2%]">
-                <span className="font-semibold">{x}</span> <span>BGN</span>
-              </p>
-              <p className="text-yellow-300 uppercase">bet</p>
-            </div>
-          ))}
+        <div className="flex flex-col gap-2">
+            <p className="uppercase text-xs text-slate-300">please, place your bet </p>
+          <div className="flex gap-4">
+            {fixedBetAmounts.map((x) => (
+              <div
+                className={`border-slate-200 border-2 px-4 py-2 rounded-md cursor-pointer shadow shadow-slate-500  ${
+                  betAmount === x
+                    ? " bg-gradient-to-b from-green-500 to-green-800"
+                    : "bg-stone-600"
+                }`}
+                onClick={() => setBetAmount(x)}
+              >
+                <p className="flex gap-[2%]">
+                  <span className="font-semibold">{x}</span> <span>BGN</span>
+                </p>
+                <p className="text-yellow-300 uppercase">bet</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* <div className="uppercase flex flex-col gap-4 border-2 px-[5%] rounded-b-[80%]">
@@ -218,7 +218,10 @@ export const SlotMachine: React.FC = () => {
           <p>Spin</p>
           <p>hold for auto</p>
         </button> */}
-        <button className=" bg-stone-900/50 p-[2.5%] rounded-full border-2 border-slate-200">
+        <button
+          className=" bg-stone-900/50 p-[2.5%] rounded-full border-2 border-slate-200"
+          onClick={shuffleMatrix}
+        >
           <RefreshCcw className="opacity-100" />
         </button>
 
