@@ -185,6 +185,11 @@ export const SlotMachine: React.FC = () => {
             }
             // Check if the middle row (index 1) matches the desired number for this column
             if (newAssets[1].value === desiredNums[colIndex]) {
+              setSpinningColumns((prev) => {
+                const newSpinningColumns = [...prev];
+                newSpinningColumns[colIndex] = false;
+                return newSpinningColumns;
+              });
               return { ...column, assets: newAssets, spinning: false };
             }
             return { ...column, assets: newAssets };
