@@ -2,7 +2,7 @@ import { Container, Sprite, Stage } from "@pixi/react";
 import React, { useEffect, useState, useRef } from "react";
 import * as PIXI from "pixi.js";
 
-const assets = [
+const assets: string[] = [
   "https://pixijs.com/assets/eggHead.png",
   "https://pixijs.com/assets/flowerTop.png",
   "https://pixijs.com/assets/helmlok.png",
@@ -10,78 +10,74 @@ const assets = [
 ];
 const columns = 3;
 const rows = 3;
+const stopTime = 3000; // Time in ms to stop each column
+
+type Matrix = string[][];
+
+const initializeAssetsMatrix = (): Matrix => {
+  return Array.from({ length: columns }, () =>
+    Array.from({ length: rows }, () => assets[Math.floor(Math.random() * assets.length)])
+  );
+};
+
+const snapToGrid = (position: number, slotHeight: number): number => {
+  return Math.round(position / slotHeight) * slotHeight;
+};
+
+const realignMatrix = (matrix: Matrix, positions: number[], slotHeight: number): Matrix => {
+  return matrix.map((column, colIndex) => {
+    const offset = Math.floor(positions[colIndex] / slotHeight) % rows;
+    return [...column.slice(offset), ...column.slice(0, offset)];
+  });
+};
 
 export const SlotMachine: React.FC = () => {
-  const [assetsMatrix, setAssetsMatrix] = useState<string[][]>(
-    Array.from({ length: columns }, () =>
-      Array.from({ length: rows }, () => assets[Math.floor(Math.random() * assets.length)])
-    )
-  );
-  const [spinning, setSpinning] = useState(false);
-  const [positions, setPositions] = useState(Array(columns).fill(0));
+  const [assetsMatrix, setAssetsMatrix] = useState<Matrix>(initializeAssetsMatrix);
+  const [spinning, setSpinning] = useState<boolean>(false);
+  const [positions, setPositions] = useState<number[]>(Array(columns).fill(0));
   const ticker = useRef(new PIXI.Ticker());
-  const spinSpeed = useRef(Array(columns).fill(0));
-  const targetPositions = useRef(Array(columns).fill(0));
-
+  const speeds = useRef<number[]>(Array(columns).fill(0));
+  const stopTimes = useRef<number[]>(Array(columns).fill(0));
   const windowWidth = window.innerWidth;
   const slotHeight = windowWidth * 0.1;
-  const totalHeight = windowWidth * 0.3;
+  const totalHeight = slotHeight * rows;
 
   useEffect(() => {
-    const handleTick = (delta: number) => {
+    const handleTick = (ticker: PIXI.Ticker) => {
+      const delta = ticker.deltaTime;
       if (spinning) {
         setPositions((prevPositions) =>
           prevPositions.map((pos, index) => {
-            const newPos = pos + spinSpeed.current[index] * delta;
-            if (newPos >= targetPositions.current[index]) {
-              spinSpeed.current[index] = 0;
-              return snapToGrid(targetPositions.current[index]);
+            const newPos = pos + speeds.current[index] * delta;
+            if (Date.now() >= stopTimes.current[index]) {
+              speeds.current[index] = 0;
+              return snapToGrid(newPos, slotHeight);
             }
             return newPos;
           })
         );
 
-        if (spinSpeed.current.every(speed => speed === 0)) {
+        if (speeds.current.every((speed) => speed === 0)) {
           setSpinning(false);
-          setAssetsMatrix((prevMatrix) => realignMatrix(prevMatrix, positions));
+          setAssetsMatrix((prevMatrix) => realignMatrix(prevMatrix, positions, slotHeight));
         }
       }
     };
 
-    const currentTicker = ticker.current;
-    currentTicker.start();
-    currentTicker.add((ticker: PIXI.Ticker) => handleTick(ticker.deltaTime));
+    ticker.current.add(handleTick);
+    ticker.current.start();
 
     return () => {
-      currentTicker.remove((ticker: PIXI.Ticker) => handleTick(ticker.deltaTime));
-      currentTicker.stop();
+      ticker.current.remove(handleTick);
+      ticker.current.stop();
     };
-  }, [spinning]);
+  }, [spinning, slotHeight]);
 
-  const snapToGrid = (position: number) => {
-    return Math.round(position / slotHeight) * slotHeight;
-  };
-
-  const realignMatrix = (matrix: string[][], positions: number[]) => {
-    return matrix.map((column, colIndex) => {
-      const offset = Math.floor(positions[colIndex] / slotHeight) % rows;
-      return [...column.slice(offset), ...column.slice(0, offset)];
-    });
-  };
-
-  const shuffleMatrix = () => {
-    if (spinning) return;
-
+  const startSpinning = () => {
+    setAssetsMatrix(initializeAssetsMatrix()); // Reset the matrix when spinning starts
     setSpinning(true);
-    const newMatrix = assetsMatrix.map((column) =>
-      column.map(() => assets[Math.floor(Math.random() * assets.length)])
-    );
-    setAssetsMatrix(newMatrix);
-
-    spinSpeed.current = Array(columns).fill(0).map(() => Math.random() * 5 + 10);
-    console.log(spinSpeed.current);
-    targetPositions.current = positions.map(() => (Math.floor(Math.random() * 20 + 20)) * slotHeight);
-    
+    speeds.current = Array(columns).fill(0).map(() => Math.random() * 5 + 8);
+    stopTimes.current = Array(columns).fill(Date.now() + stopTime).map((time, index) => time + index * 500);
     setPositions(Array(columns).fill(0));
   };
 
@@ -94,17 +90,17 @@ export const SlotMachine: React.FC = () => {
       </div>
       <div>
         <Stage
-          options={{ background: 0xfffff }}
+          options={{ background: 0xffffff }}
           width={windowWidth * 0.4}
           height={totalHeight}
         >
           {assetsMatrix.map((column, colIndex) => (
             <Container x={colIndex * windowWidth * 0.15} key={colIndex}>
-              {[...column, ...column].map((asset, rowIndex) => (
+              {column.map((asset, rowIndex) => (
                 <Sprite
                   key={rowIndex}
                   image={asset}
-                  y={(positions[colIndex] + rowIndex * slotHeight) % (totalHeight * 2)}
+                  y={(positions[colIndex] + rowIndex * slotHeight) % totalHeight}
                   width={windowWidth * 0.1}
                   height={slotHeight}
                 />
@@ -114,8 +110,7 @@ export const SlotMachine: React.FC = () => {
         </Stage>
       </div>
       <div className="w-full flex gap-[10%] justify-center items-center">
-        {/* ... (betting controls remain the same) ... */}
-        <button onClick={shuffleMatrix} className="uppercase" disabled={spinning}>
+        <button onClick={startSpinning} className="uppercase" disabled={spinning}>
           <p>Spin</p>
           <p>hold for auto</p>
         </button>
