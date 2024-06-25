@@ -11,6 +11,7 @@ const assets: string[] = [
 const columns = 3;
 const rows = 3;
 const stopTime = 3000; // Time in ms to stop each column
+const totalSpinTime = 7000; // Total spin time in ms
 
 type Matrix = string[][];
 
@@ -31,35 +32,64 @@ const realignMatrix = (matrix: Matrix, positions: number[], slotHeight: number):
   });
 };
 
+const lerp = (start: number, end: number, t: number): number => {
+  return start + (end - start) * t;
+};
+
+const backout = (t: number): number => {
+  const s = 1.70158;
+  return --t * t * ((s + 1) * t + s) + 1;
+};
+
+const getRandomAsset = (): string => {
+  return assets[Math.floor(Math.random() * assets.length)];
+};
+
+const updateAssetsMatrix = (matrix: Matrix): Matrix => {
+  return matrix.map(column => [getRandomAsset(), ...column.slice(0, rows - 1)]);
+};
+
 export const SlotMachine: React.FC = () => {
   const [assetsMatrix, setAssetsMatrix] = useState<Matrix>(initializeAssetsMatrix);
   const [spinning, setSpinning] = useState<boolean>(false);
   const [positions, setPositions] = useState<number[]>(Array(columns).fill(0));
   const ticker = useRef(new PIXI.Ticker());
-  const speeds = useRef<number[]>(Array(columns).fill(0));
+  const startTimes = useRef<number[]>(Array(columns).fill(0));
   const stopTimes = useRef<number[]>(Array(columns).fill(0));
+  const speeds = useRef<number[]>(Array(columns).fill(0));
   const windowWidth = window.innerWidth;
   const slotHeight = windowWidth * 0.1;
   const totalHeight = slotHeight * rows;
+  const intervalId = useRef<number | null>(null);
 
   useEffect(() => {
     const handleTick = (ticker: PIXI.Ticker) => {
       const delta = ticker.deltaTime;
       if (spinning) {
+        const now = Date.now();
         setPositions((prevPositions) =>
           prevPositions.map((pos, index) => {
-            const newPos = pos + speeds.current[index] * delta;
-            if (Date.now() >= stopTimes.current[index]) {
+            if (now >= stopTimes.current[index]) {
               speeds.current[index] = 0;
-              return snapToGrid(newPos, slotHeight);
+              return snapToGrid(pos, slotHeight);
             }
-            return newPos;
+
+            const elapsed = now - startTimes.current[index];
+            const duration = stopTimes.current[index] - startTimes.current[index];
+            const t = Math.min(elapsed / duration, 1);
+            const easedT = backout(t);
+            const newPos = lerp(0, speeds.current[index] * (totalSpinTime / 2), easedT); // Adjusted speed multiplier
+            return pos + newPos * delta;
           })
         );
 
         if (speeds.current.every((speed) => speed === 0)) {
           setSpinning(false);
           setAssetsMatrix((prevMatrix) => realignMatrix(prevMatrix, positions, slotHeight));
+          if (intervalId.current !== null) {
+            clearInterval(intervalId.current);
+            intervalId.current = null;
+          }
         }
       }
     };
@@ -70,15 +100,27 @@ export const SlotMachine: React.FC = () => {
     return () => {
       ticker.current.remove(handleTick);
       ticker.current.stop();
+      if (intervalId.current !== null) {
+        clearInterval(intervalId.current);
+      }
     };
   }, [spinning, slotHeight]);
 
   const startSpinning = () => {
     setAssetsMatrix(initializeAssetsMatrix()); // Reset the matrix when spinning starts
     setSpinning(true);
-    speeds.current = Array(columns).fill(0).map(() => Math.random() * 5 + 8);
-    stopTimes.current = Array(columns).fill(Date.now() + stopTime).map((time, index) => time + index * 500);
+    speeds.current = Array(columns).fill(0).map(() => Math.random() * 0.5); // Slower initial speed values
+    startTimes.current = Array(columns).fill(Date.now());
+    stopTimes.current = Array(columns).fill(Date.now() + stopTime).map((time, index) => time + index * 1500); // Stagger the stopping times even more
     setPositions(Array(columns).fill(0));
+
+    // Start the interval to update the assets matrix every second
+    if (intervalId.current !== null) {
+      clearInterval(intervalId.current);
+    }
+    intervalId.current = window.setInterval(() => {
+      setAssetsMatrix((prevMatrix) => updateAssetsMatrix(prevMatrix));
+    }, 1000);
   };
 
   return (
