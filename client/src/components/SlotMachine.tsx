@@ -163,7 +163,7 @@ export const SlotMachine: React.FC = () => {
     graphics.lineStyle(5, 0x966304, 1);
     const fillColor = 0x08043c;
     graphics.beginFill(fillColor, 1);
-    graphics.drawRoundedRect(0, 0, windowWidth * 0.11, slotHeight * rows, 5);
+    graphics.drawRoundedRect(0, 0, windowWidth * 0.11 * (windowWidth <= 768 ? 2 : 1), slotHeight * rows * (windowWidth <= 768 ? 2 : 1), 5);
     graphics.endFill();
   };
 
@@ -181,12 +181,13 @@ export const SlotMachine: React.FC = () => {
       <div className="my-auto relative">
         <Stage
           options={{ backgroundAlpha: 0 }}
-          width={windowWidth * 0.391}
-          height={totalHeight}
+          width={(windowWidth * 0.391) * (windowWidth <= 768 ? 2 : 1)}
+          height={totalHeight * (windowWidth <= 768 ? 2 : 1)}
+  
         >
           {assetsMatrix.map((column, colIndex) => (
             <Container
-              x={(colIndex !== 0 ? colIndex : 0.01) * windowWidth * 0.14}
+              x={(colIndex !== 0 ? colIndex : 0.01) * windowWidth * 0.14 * (windowWidth <= 768 ? 2 : 1)}
               key={colIndex}
             >
               <Graphics draw={(g: PIXI.Graphics) => drawRect(g)} />
@@ -195,16 +196,16 @@ export const SlotMachine: React.FC = () => {
                   key={rowIndex}
                   image={asset}
                   y={
-                    (positions[colIndex] + rowIndex * slotHeight) %
-                    (totalHeight * 2)
+                    ((positions[colIndex] + rowIndex * slotHeight) %
+                    (totalHeight * 2)) * (windowWidth <= 768 ? 2 : 1)
                   }
                   x={
                     windowWidth >= 768
                       ? windowWidth * 0.005
                       : windowWidth * 0.004
                   }
-                  width={windowWidth * 0.1}
-                  height={slotHeight}
+                  width={windowWidth * 0.1 * (windowWidth <= 768 ? 2 : 1)}
+                  height={windowWidth <= 768 ? slotHeight * 2 : slotHeight}
                 />
               ))}
             </Container>
