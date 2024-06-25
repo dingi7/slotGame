@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 
 import { Container, Graphics, Sprite, Stage } from "@pixi/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { RefreshCcw } from "lucide-react";
 import { assets } from "../assets/reelAssets";
@@ -13,7 +13,6 @@ const rows = 3;
 const stopTime = 1000; // Time in ms to stop each column
 const totalSpinTime = 3000; // Total spin time in ms
 
-type Matrix = { image: string; value: number }[][];
 
 type Asset = {
   image: string;
@@ -26,30 +25,6 @@ type ColumnStateType = {
   middleRowIndex: number;
 };
 
-const snapToGrid = (position: number, slotHeight: number): number => {
-  return Math.round(position / slotHeight) * slotHeight;
-};
-
-const lerp = (start: number, end: number, t: number): number => {
-  return start + (end - start) * t;
-};
-
-// Modified easing function for slower end
-const backout = (t: number): number => {
-  const s = 1.70158;
-  return --t * t * ((s + 1) * t + s) + 1;
-};
-
-const setWinningLine = (matrix: Matrix, value: number): Matrix => {
-  const winningLine = assets.find((asset) => asset.value === value);
-  if (!winningLine) return matrix;
-
-  return matrix.map((column) => {
-    const newColumn = [...column];
-    newColumn[1] = winningLine; // Set the middle row to the winning value
-    return newColumn;
-  });
-};
 
 const initializeAssetsMatrix = (): ColumnStateType[] => {
   const columnStates: ColumnStateType[] = Array.from(
@@ -89,16 +64,11 @@ export const SlotMachine: React.FC = () => {
   const [positions, setPositions] = useState<number[]>(Array(columns).fill(0));
   const [showLine, setShowLine] = useState<boolean>(false);
 
-  const ticker = useRef(new PIXI.Ticker());
-  const startTimes = useRef<number[]>(Array(columns).fill(0));
-  const stopTimes = useRef<number[]>(Array(columns).fill(0));
-  const speeds = useRef<number[]>(Array(columns).fill(0));
   const windowWidth = window.innerWidth;
   const isMobile = windowWidth <= 768;
   const slotHeight = windowWidth * 0.1 * (isMobile ? 2 : 1);
   const totalHeight = slotHeight * rows;
-  const intervalId = useRef<number | null>(null);
-  const lineIntervalId = useRef<number | null>(null);
+
   const [balance, setBalance] = useState<number>(5000);
   const [lastWin, setLastWin] = useState<number>(0);
 
@@ -162,15 +132,10 @@ export const SlotMachine: React.FC = () => {
       prevStates.map((state) => ({ ...state, spinning: true }))
     );
     setSpinningColumns(Array(columns).fill(true));
-    // Handle other actions needed to start spinning
     await handleSpinRequest();
-
-    // Assuming this function is defined to handle spin request
   };
 
-  useEffect(() => {
-    console.log(desiredNums);
-  }, [desiredNums]);
+
 
   useEffect(() => {
     if (spinningColumns.some((spinning) => spinning)) {
