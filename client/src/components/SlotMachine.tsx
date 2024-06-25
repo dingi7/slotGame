@@ -1,9 +1,9 @@
 import * as PIXI from "pixi.js";
 
+import { ChevronDown, ChevronUp, RefreshCcw } from "lucide-react";
 import { Container, Graphics, Sprite, Stage } from "@pixi/react";
 import { useEffect, useRef, useState } from "react";
 
-import { RefreshCcw } from "lucide-react";
 import { sendSpinRequest } from "../api/requests";
 import slotBackground from "../assets/slot-background.jpg";
 
@@ -79,7 +79,9 @@ export const SlotMachine: React.FC = () => {
   const stopTimes = useRef<number[]>(Array(columns).fill(0));
   const speeds = useRef<number[]>(Array(columns).fill(0));
   const windowWidth = window.innerWidth;
-  const slotHeight = windowWidth * 0.1 * (windowWidth <= 768 ? 2 : 1);
+  const [expandedDrawer, setExpandedDrawer] = useState<boolean>(false);
+  const isMobile = windowWidth <= 768;
+  const slotHeight = windowWidth * 0.1 * (isMobile ? 2 : 1);
   const totalHeight = slotHeight * rows;
   const intervalId = useRef<number | null>(null);
 
@@ -137,8 +139,8 @@ export const SlotMachine: React.FC = () => {
   const startSpinning = async () => {
     setAssetsMatrix(initializeAssetsMatrix()); // Reset the matrix when spinning starts
     setSpinning(true);
-    const result = await sendSpinRequest(betAmount);
-    console.log(result);
+    //const result = await sendSpinRequest(betAmount);
+    //console.log(result);
 
     speeds.current = Array(columns)
       .fill(0)
@@ -166,7 +168,7 @@ export const SlotMachine: React.FC = () => {
     graphics.drawRoundedRect(
       0,
       0,
-      windowWidth * 0.11 * (windowWidth <= 768 ? 2 : 1),
+      windowWidth * 0.11 * (isMobile ? 2 : 1),
       slotHeight * rows,
       5
     );
@@ -175,92 +177,139 @@ export const SlotMachine: React.FC = () => {
 
   return (
     <div
-      className={`w-full h-full flex flex-col justify-center items-center gap-5 bg-[url(${slotBackground})] text-white overflow-hidden`}
+      className={`w-full h-full flex flex-col justify-center items-center gap-5 bg-[url(${slotBackground})] ${
+        isMobile && "bg-cover"
+      } text-white overflow-hidden`}
       style={{ backgroundImage: `url(${slotBackground})` }}
     >
-      <div className="flex gap-4 pt-[2%]">
-        <p className="uppercase text-yellow-400 text-2xl font-semibold text-shadow-superhot">
-          slot machine
-        </p>
-      </div>
+      <div className="w-full h-full flex flex-col justify-center items-center">
+        <div className="flex gap-4 pt-[2%]">
+          <p className="uppercase text-yellow-400 text-2xl font-semibold text-shadow-superhot">
+            slot machine
+          </p>
+        </div>
 
-      <div className="my-auto relative">
-        <Stage
-          options={{ backgroundAlpha: 0 }}
-          width={windowWidth * 0.391 * (windowWidth <= 768 ? 2 : 1)}
-          height={totalHeight}
-        >
-          {assetsMatrix.map((column, colIndex) => (
-            <Container
-              x={
-                (colIndex !== 0 ? colIndex : 0.01) *
-                windowWidth *
-                0.14 *
-                (windowWidth <= 768 ? 2 : 1)
-              }
-              key={colIndex}
-            >
-              <Graphics draw={(g: PIXI.Graphics) => drawRect(g)} />
-              {[...column, ...column].map((asset, rowIndex) => (
-                <Sprite
-                  key={rowIndex}
-                  image={asset}
-                  y={
-                    ((positions[colIndex] + rowIndex * slotHeight) %
-                      (totalHeight * 2))
-                  }
-                  x={
-                    windowWidth <= 768
-                      ? windowWidth * 0.010
-                      : windowWidth * 0.005
-                  }
-                  width={windowWidth * 0.1 * (windowWidth <= 768 ? 2 : 1)}
-                  height={slotHeight}
-                />
+        <div className="my-auto relative">
+          <Stage
+            options={{ backgroundAlpha: 0 }}
+            width={windowWidth * 0.391 * (isMobile ? 2 : 1)}
+            height={totalHeight}
+          >
+            {assetsMatrix.map((column, colIndex) => (
+              <Container
+                x={
+                  (colIndex !== 0 ? colIndex : 0.01) *
+                  windowWidth *
+                  0.14 *
+                  (isMobile ? 2 : 1)
+                }
+                key={colIndex}
+              >
+                <Graphics draw={(g: PIXI.Graphics) => drawRect(g)} />
+                {[...column, ...column].map((asset, rowIndex) => (
+                  <Sprite
+                    key={rowIndex}
+                    image={asset}
+                    y={
+                      (positions[colIndex] + rowIndex * slotHeight) %
+                      (totalHeight * 2)
+                    }
+                    x={isMobile ? windowWidth * 0.01 : windowWidth * 0.005}
+                    width={windowWidth * 0.1 * (isMobile ? 2 : 1)}
+                    height={slotHeight}
+                  />
+                ))}
+              </Container>
+            ))}
+          </Stage>
+        </div>
+
+        {isMobile && (
+          <div className="mb-[10%] flex flex-col gap-2">
+            <p className="uppercase text-xs text-slate-300">
+              please, place your bet{" "}
+            </p>
+            <div className={`flex flex-row gap-2 md:gap-4`}>
+              {fixedBetAmounts.map((x) => (
+                <div
+                  className={`border-slate-200 border-2 px-4 py-2 rounded-md cursor-pointer shadow shadow-slate-500 text-sm md:text-base ${
+                    betAmount === x
+                      ? " bg-gradient-to-b from-green-500 to-green-800"
+                      : "bg-stone-600"
+                  }`}
+                  onClick={() => setBetAmount(x)}
+                >
+                  <p className="flex gap-[2%]">
+                    <span className="font-semibold">{x}</span> <span>BGN</span>
+                  </p>
+                  <p className="text-yellow-300 uppercase">bet</p>
+                </div>
               ))}
-            </Container>
-          ))}
-        </Stage>
+            </div>
+          </div>
+        )}
       </div>
 
-      <div className="w-full md:w-[60%] mx-auto mb-0 mt-auto pb-4 flex  justify-evenly items-center select-none">
+      <div
+        className={`w-full md:w-[60%] mx-auto mb-0 mt-auto pb-4 flex  justify-evenly ${
+          isMobile ? "items-end" : "items-center"
+        } select-none relative h-[15%]`}
+      >
         <div>
           <p className="uppercase font-semibold">balance:</p>
           <p>5000 BGN</p>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <p className="uppercase text-xs text-slate-300">
-            please, place your bet{" "}
-          </p>
-          <div className="flex gap-4">
-            {fixedBetAmounts.map((x) => (
-              <div
-                className={`border-slate-200 border-2 px-4 py-2 rounded-md cursor-pointer shadow shadow-slate-500  ${
-                  betAmount === x
-                    ? " bg-gradient-to-b from-green-500 to-green-800"
-                    : "bg-stone-600"
-                }`}
-                onClick={() => setBetAmount(x)}
-              >
-                <p className="flex gap-[2%]">
-                  <span className="font-semibold">{x}</span> <span>BGN</span>
-                </p>
-                <p className="text-yellow-300 uppercase">bet</p>
-              </div>
-            ))}
+        {!isMobile && (
+          <div className=" flex flex-col gap-2 relative">
+            <p className="uppercase text-xs text-slate-300 absolute -top-5 left-1/2 -translate-x-[50%]">
+              please, place your bet{" "}
+            </p>
+            <div className={`flex flex-row gap-2 md:gap-4`}>
+              {fixedBetAmounts.map((x) => (
+                <div
+                  className={`border-slate-200 border-2 px-4 py-2 rounded-md cursor-pointer shadow shadow-slate-500 text-sm md:text-base ${
+                    betAmount === x
+                      ? " bg-gradient-to-b from-green-500 to-green-800"
+                      : "bg-stone-600"
+                  }`}
+                  onClick={() => setBetAmount(x)}
+                >
+                  <p className="flex gap-[2%]">
+                    <span className="font-semibold">{x}</span> <span>BGN</span>
+                  </p>
+                  <p className="text-yellow-300 uppercase">bet</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
-        <button
-          className=" bg-stone-900/50 p-[2.5%] rounded-full border-2 border-slate-200"
-          onClick={startSpinning}
-          disabled={spinning}
-        >
-          <RefreshCcw
-            className={`opacity-100 ${spinning ? "animate-spin" : ""}`}
-          />
-        </button>
+        {isMobile && (
+          <button
+            className=" bg-stone-900/50 p-[2.5%]  h-full aspect-square flex justify-center items-center rounded-full border-2 border-slate-200 "
+            onClick={startSpinning}
+            disabled={spinning}
+          >
+            <RefreshCcw
+              className={`opacity-100 ${
+                spinning ? "animate-spin" : ""
+              } w-3/5 h-3/5`}
+            />
+          </button>
+        )}
+
+        {!isMobile && (
+          <button
+            className=" bg-stone-900/50 p-[2.5%] rounded-full border-2 border-slate-200"
+            onClick={startSpinning}
+            disabled={spinning}
+          >
+            <RefreshCcw
+              className={`opacity-100 ${spinning ? "animate-spin" : ""}`}
+            />
+          </button>
+        )}
 
         <div className="uppercase">
           <p className="font-semibold">last win:</p>
