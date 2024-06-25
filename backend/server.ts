@@ -4,6 +4,7 @@ import slotRouter from "./routes/slot.route";
 import { createServer } from "http";
 import cors from "cors";
 import * as dotenv from "dotenv";
+import { RTPtest } from "./util/RTPtest";
 
 dotenv.config();
 const app = express();
@@ -22,3 +23,6 @@ app.use(slotRouter);
 server.listen(8000, () => {
   console.log("Server is listening on port 8000");
 });
+
+
+RTPtest()
