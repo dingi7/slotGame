@@ -7,6 +7,7 @@ import { RefreshCcw } from "lucide-react";
 import { assets } from "../assets/reelAssets";
 import { sendSpinRequest } from "../api/requests";
 import slotBackground from "../assets/slot-background.jpg";
+import { SlotMachineFooter } from "./SlotMachineFooter";
 
 const columns = 3;
 const rows = 3;
@@ -243,7 +244,7 @@ export const SlotMachine: React.FC = () => {
         )}
       </div>
 
-      <div
+      {/* <div
         className={`w-full md:w-[60%] mx-auto mb-0 mt-auto pb-4 flex  justify-evenly ${
           isMobile ? "items-end" : "items-center"
         } select-none relative h-[15%]`}
@@ -313,7 +314,17 @@ export const SlotMachine: React.FC = () => {
           <p className="font-semibold">last win:</p>
           <p>{lastWin}</p>
         </div>
-      </div>
+      </div> */}
+      <SlotMachineFooter
+        isMobile={isMobile}
+        balance={balance}
+        lastWin={lastWin}
+        betAmount={betAmount}
+        setBetAmount={setBetAmount}
+        startSpinning={startSpinning}
+        spinningColumns={spinningColumns}
+        fixedBetAmounts={fixedBetAmounts}
+      />
     </div>
   );
 };
