@@ -207,8 +207,7 @@ export const SlotMachine: React.FC = () => {
                   image={asset}
                   y={
                     ((positions[colIndex] + rowIndex * slotHeight) %
-                      (totalHeight * 2)) *
-                    (windowWidth <= 768 ? 2 : 1)
+                      (totalHeight * 2))
                   }
                   x={
                     windowWidth <= 768
