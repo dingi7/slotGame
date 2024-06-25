@@ -33,8 +33,9 @@ function calculatePayout(result: Slot, betAmount: number): number {
   return payout * betAmount; // Adjusting to get approximately 96% RTP
 }
 
-export function play(betAmount: number): [number, Slot] {
+export function play(betAmount: number): [boolean, number, Slot] {
   const result = spin();
   const payout = calculatePayout(result, betAmount);
-  return [payout, result];
+  let win = payout > 0 ? true : false;
+  return [win, payout, result];
 }

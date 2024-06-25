@@ -4,12 +4,12 @@ export default {
   theme: {
     extend: {
       animation: {
-        spin: "spin 2s linear infinite",
+        spin: "spin 1.2s linear infinite",
       },
       keyframes: {
         spin: {
           "0%": { transform: "rotate(0deg)" },
-          "100%": { transform: "rotate(360deg)" },
+          "100%": { transform: "rotate(-360deg)" },
         },
       },
       textShadow: {

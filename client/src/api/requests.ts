@@ -1,6 +1,7 @@
 const url = 'http://localhost:8000/spin';
 
 export interface ResponseData {
+    win: boolean;
     payout: number;
     reels: {
         reel1: number;
