@@ -134,7 +134,7 @@ export const SlotMachine: React.FC = () => {
   };
 
   const startSpinning = async () => {
-    //setIsModalOpen(false);
+    setIsModalOpen(false);
     stopSound();
     playSound(spinningSound);
     setColumnStates((prevStates) =>
