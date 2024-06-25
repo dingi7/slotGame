@@ -1,19 +1,21 @@
 import * as PIXI from "pixi.js";
 
 import { Container, Graphics, Sprite, Stage } from "@pixi/react";
+import { playSound, stopSound } from "../utils/soundPlayer";
 import { useEffect, useState } from "react";
 
 import { RefreshCcw } from "lucide-react";
+import { SlotMachineFooter } from "./SlotMachineFooter";
 import { assets } from "../assets/reelAssets";
 import { sendSpinRequest } from "../api/requests";
 import slotBackground from "../assets/slot-background.jpg";
-import { SlotMachineFooter } from "./SlotMachineFooter";
+import spinningSound from "../assets/spinning.wav";
+import winSound from "../assets/win.wav";
 
 const columns = 3;
 const rows = 3;
 const stopTime = 1000; // Time in ms to stop each column
 const totalSpinTime = 3000; // Total spin time in ms
-
 
 type Asset = {
   image: string;
@@ -25,7 +27,6 @@ type ColumnStateType = {
   spinning: boolean;
   middleRowIndex: number;
 };
-
 
 const initializeAssetsMatrix = (): ColumnStateType[] => {
   const columnStates: ColumnStateType[] = Array.from(
@@ -82,6 +83,7 @@ export const SlotMachine: React.FC = () => {
     setWin(result.win);
     setPayout(result.payout);
     if (result.win) {
+       playSound(winSound);
       setTimeout(() => {
         setShowLine(true);
         const lineIntervalId = setInterval(() => {
@@ -129,6 +131,8 @@ export const SlotMachine: React.FC = () => {
   };
 
   const startSpinning = async () => {
+    stopSound();
+    playSound(spinningSound);
     setColumnStates((prevStates) =>
       prevStates.map((state) => ({ ...state, spinning: true }))
     );
@@ -136,7 +140,16 @@ export const SlotMachine: React.FC = () => {
     await handleSpinRequest();
   };
 
+  useEffect(() => {
+    // Check if all columnStates are spinning = false
+    const allStopped = columnStates.every(
+      (column) => column.spinning === false
+    );
 
+    if (allStopped) {
+      stopSound();
+    }
+  }, [columnStates]);
 
   useEffect(() => {
     if (spinningColumns.some((spinning) => spinning)) {
