@@ -1,12 +1,12 @@
 import * as PIXI from 'pixi.js';
 
-import { RefreshCcw } from 'lucide-react';
 import { Container, Graphics, Sprite, Stage } from '@pixi/react';
 import { useEffect, useRef, useState } from 'react';
 
+import { RefreshCcw } from 'lucide-react';
+import { assets } from '../assets/reelAssets';
 import { sendSpinRequest } from '../api/requests';
 import slotBackground from '../assets/slot-background.jpg';
-import { assets } from '../assets/reelAssets';
 
 const columns = 3;
 const rows = 3;
@@ -40,24 +40,24 @@ const realignMatrix = (
   const updatedMatrix = matrix.map((column, colIndex) => {
     if (colIndex === 0) {
       return column.map((row, rowIndex) => {
-        if (rowIndex === 1) {
+        
           return assets.find(asset => asset.value == resultKeys[0]);
-        }
-        return getRandomAsset();
+        //}
+        //return getRandomAsset();
       });
     } else if (colIndex === 1) {
       return column.map((row, rowIndex) => {
-        if (rowIndex === 1) {
+        //if (rowIndex === 1) {
           return assets.find(asset => asset.value == resultKeys[1]);
-        }
-        return getRandomAsset();
+        //}
+        //return getRandomAsset();
       });
     } else if (colIndex === 2) {
       return column.map((row, rowIndex) => {
-        if (rowIndex === 1) {
+        //if (rowIndex === 1) {
           return assets.find(asset => asset.value == resultKeys[2]);
-        }
-        return getRandomAsset();
+        //}
+        //return getRandomAsset();
       });
     }
     return column;

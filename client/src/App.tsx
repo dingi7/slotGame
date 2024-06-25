@@ -5,8 +5,8 @@ import SlotMachinePixi from './components/pixiEx'
 
 function App() {
   return (
-      // <SlotMachine /> 
-      <SlotMachinePixi></SlotMachinePixi>
+       <SlotMachine /> 
+      //<SlotMachinePixi></SlotMachinePixi>
   )
 }
 
