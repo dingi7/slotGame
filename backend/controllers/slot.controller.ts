@@ -13,9 +13,10 @@ const Post = (req: Request, res: Response) => {
     return;
   }
 
-  const [payout, [reel1, reel2, reel3]] = play(betAmount);
+  const [win, payout, [reel1, reel2, reel3]] = play(betAmount);
 
   res.json({
+    win,
     payout,
     reels: {
       reel1,

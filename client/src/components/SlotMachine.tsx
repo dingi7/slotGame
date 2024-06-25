@@ -137,8 +137,8 @@ export const SlotMachine: React.FC = () => {
   const startSpinning = async () => {
     setAssetsMatrix(initializeAssetsMatrix()); // Reset the matrix when spinning starts
     setSpinning(true);
-    //const result = await sendSpinRequest(betAmount);
-    // console.log(result);
+    const result = await sendSpinRequest(betAmount);
+    console.log(result);
 
     speeds.current = Array(columns)
       .fill(0)
