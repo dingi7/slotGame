@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { play } from "../operations/slotMachine/slotLogic.operation";
 import { StatusCodes } from "http-status-codes";
 
-const Get = (req: Request, res: Response) => {
+const Post = (req: Request, res: Response) => {
   const { betAmount } = req.body;
 
   // may potentially be extracted as a global validation utility in the future for all APIs handling data from the body.
@@ -24,4 +24,4 @@ const Get = (req: Request, res: Response) => {
     },
   });
 };
-export default { Get };
+export default { Post };
