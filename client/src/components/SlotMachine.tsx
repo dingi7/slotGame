@@ -17,7 +17,7 @@ const assets = [
 const columns = 3;
 const rows = 3;
 const stopTime = 3000; // Time in ms to stop each column
-const totalSpinTime = 7000; // Total spin time in ms
+const totalSpinTime = 4000; // Total spin time in ms
 
 type Matrix = string[][];
 
