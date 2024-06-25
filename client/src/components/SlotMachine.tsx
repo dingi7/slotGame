@@ -244,6 +244,7 @@ export const SlotMachine: React.FC = () => {
         <button
           className=" bg-stone-900/50 p-[2.5%] rounded-full border-2 border-slate-200"
           onClick={startSpinning}
+          disabled={spinning}
         >
           <RefreshCcw
             className={`opacity-100 ${spinning ? "animate-spin" : ""}`}
