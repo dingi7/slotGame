@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js";
 
-import { ChevronDown, ChevronUp, RefreshCcw } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 import { Container, Graphics, Sprite, Stage } from "@pixi/react";
 import { useEffect, useRef, useState } from "react";
 
@@ -88,7 +88,6 @@ export const SlotMachine: React.FC = () => {
   const stopTimes = useRef<number[]>(Array(columns).fill(0));
   const speeds = useRef<number[]>(Array(columns).fill(0));
   const windowWidth = window.innerWidth;
-  const [expandedDrawer, setExpandedDrawer] = useState<boolean>(false);
   const isMobile = windowWidth <= 768;
   const slotHeight = windowWidth * 0.1 * (isMobile ? 2 : 1);
   const totalHeight = slotHeight * rows;
@@ -181,6 +180,8 @@ export const SlotMachine: React.FC = () => {
     intervalId.current = window.setInterval(() => {
       setAssetsMatrix((prevMatrix) => updateAssetsMatrix(prevMatrix));
     }, 1000);
+    // const result = await sendSpinRequest(betAmount);
+    
   };
 
   const handleSpinRequest = async () => {
@@ -188,7 +189,7 @@ export const SlotMachine: React.FC = () => {
     console.log(result);
     setWin(true);
     setPayout(result.payout);
-    if (result.win) {
+    // if (true) {
       setTimeout(() => {
         setShowLine(true);
         const lineIntervalId = setInterval(() => {
@@ -199,7 +200,7 @@ export const SlotMachine: React.FC = () => {
           setShowLine(false);
         }, totalSpinTime);
       }, totalSpinTime + 1000);
-    }
+    // }
   };
 
   const drawRect = (graphics: PIXI.Graphics) => {
@@ -277,7 +278,9 @@ export const SlotMachine: React.FC = () => {
                   />
                 ))}
               </Container>
+              
             ))}
+            {showLine && <Graphics draw={(g: PIXI.Graphics) => drawLine(g)} />}
           </Stage>
         </div>
 

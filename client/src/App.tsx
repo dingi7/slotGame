@@ -1,10 +1,12 @@
 import './App.css'
 
 import { SlotMachine } from './components/SlotMachine'
+import SlotMachinePixi from './components/pixiEx'
 
 function App() {
   return (
-      <SlotMachine /> 
+      // <SlotMachine /> 
+      <SlotMachinePixi></SlotMachinePixi>
   )
 }
 
