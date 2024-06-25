@@ -1,6 +1,6 @@
 const url = 'http://localhost:8000/spin';
 
-interface ResponseData {
+export interface ResponseData {
     payout: number;
     reels: {
         reel1: number;
@@ -9,7 +9,7 @@ interface ResponseData {
     };
 }
 
-export async function sendPostRequest(betAmount: number): Promise<ResponseData> {
+export async function sendSpinRequest(betAmount: number): Promise<ResponseData> {
     const requestBody = {
         betAmount: betAmount,
     };
