@@ -41,21 +41,21 @@ const realignMatrix = (
     if (colIndex === 0) {
       return column.map((row, rowIndex) => {
         if (rowIndex === 1) {
-          return assets.find(asset => asset.value === result[resultKeys[0]]);
+          return assets.find(asset => asset.value == resultKeys[0]);
         }
         return getRandomAsset();
       });
     } else if (colIndex === 1) {
       return column.map((row, rowIndex) => {
         if (rowIndex === 1) {
-          return assets.find(asset => asset.value === result[resultKeys[1]]);
+          return assets.find(asset => asset.value == resultKeys[1]);
         }
         return getRandomAsset();
       });
     } else if (colIndex === 2) {
       return column.map((row, rowIndex) => {
         if (rowIndex === 1) {
-          return assets.find(asset => asset.value === result[resultKeys[2]]);
+          return assets.find(asset => asset.value == resultKeys[2]);
         }
         return getRandomAsset();
       });
@@ -133,7 +133,6 @@ export const SlotMachine: React.FC = () => {
     const result = await sendSpinRequest(betAmount);
     setBalance((prevBalance) => prevBalance - betAmount);
     setResult(result.reels);
-    // setResultingReel(result.reels);
     console.log(result);
     setWin(result.win);
     setPayout(result.payout);
@@ -370,7 +369,7 @@ export const SlotMachine: React.FC = () => {
       >
         <div>
           <p className='uppercase font-semibold'>balance:</p>
-          <p>${balance} BGN</p>
+          <p>{balance} BGN</p>
         </div>
 
         {!isMobile && (
