@@ -1,13 +1,13 @@
-import Number0 from "./0.webp";
-import Number1 from "./1.webp";
-import Number2 from "./2.webp";
+import Number0 from "./0.png";
+import Number1 from "./1.png";
+import Number2 from "./2.png";
 import Number3 from "./3.png";
-import Number4 from "./4.webp";
-import Number5 from "./5.webp";
-import Number6 from "./6.webp";
-import Number7 from "./7.webp";
-import Number8 from "./8.webp";
-import Number9 from "./9.webp";
+import Number4 from "./4.png";
+import Number5 from "./5.png";
+import Number6 from "./6.png";
+import Number7 from "./7.png";
+import Number8 from "./8.png";
+import Number9 from "./9.png";
 
 export const assets = [
   {
