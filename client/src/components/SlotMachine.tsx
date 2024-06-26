@@ -14,7 +14,6 @@ import winSound from "../assets/win.wav";
 
 const columns = 3;
 const rows = 3;
-const stopTime = 1000; // Time in ms to stop each column
 const totalSpinTime = 3000; // Total spin time in ms
 
 type Asset = {
@@ -81,7 +80,7 @@ export const SlotMachine: React.FC = () => {
   const handleSpinRequest = async () => {
     const result = await sendSpinRequest(betAmount);
     setBalance((prevBalance) => prevBalance - betAmount);
-    setDesiredNums(Object.values(result.reels).map((num) => parseInt(num)));
+    setDesiredNums(Object.values(result.reels).map((num) => Number(num)));
     setWin(result.win);
     setPayout(result.payout);
     if (result.win) {
@@ -167,7 +166,7 @@ export const SlotMachine: React.FC = () => {
               newAssets.unshift(lastElement);
             }
             // Check if the middle row (index 1) matches the desired number for this column
-            if (newAssets[1].value === desiredNums[colIndex]) {
+            if (newAssets[1].value === desiredNums![colIndex]) {
               setSpinningColumns((prev) => {
                 const newSpinningColumns = [...prev];
                 newSpinningColumns[colIndex] = false;
