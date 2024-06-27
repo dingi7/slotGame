@@ -1,8 +1,10 @@
-import React from 'react';
-import { Container, Graphics, Sprite } from '@pixi/react';
-import { drawRect } from '../utils/drawUtils';
 import * as PIXI from 'pixi.js';
+
+import { Container, Graphics, Sprite } from '@pixi/react';
+
 import { ColumnStateType } from '../types/slotMachineTypes';
+import React from 'react';
+import { drawRect } from '../utils/drawUtils';
 
 interface SlotColumnProps {
     column: ColumnStateType;

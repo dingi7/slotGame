@@ -1,5 +1,8 @@
-import { assets } from "../assets/reelAssets";
+import * as PIXI from 'pixi.js';
+
 import { ColumnStateType } from "../types/slotMachineTypes";
+import { assets } from "../assets/reelAssets";
+import { useRef } from "react";
 
 export const shuffleArray = (array: any[]): any[] => {
     for (let i = array.length - 1; i > 0; i--) {

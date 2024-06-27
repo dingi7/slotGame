@@ -1,3 +1,5 @@
+import * as PIXI from 'pixi.js';
+
 export type Asset = {
     image: string;
     value: number;
