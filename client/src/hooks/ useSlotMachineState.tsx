@@ -27,10 +27,10 @@ export const useSlotMachineState = () => {
   const tickers: PIXI.Ticker[] = Array(3).fill(new PIXI.Ticker());
   const [spinIntervalDuration, setspinIntervalDuration] = useState(60);
   const minSpinTimes = 10;
-  const minStopSpinInterval = 3
+  const minStopSpinInterval = 3;
   const [spinCounters, setSpinCounters] = useState(Array(3).fill(0));
 
-
+  const frameRate = 10;
 
   const handleSpinRequest = async () => {
     const result = await sendSpinRequest(betAmount);
@@ -74,71 +74,71 @@ export const useSlotMachineState = () => {
     }
   }, [columnStates]);
 
-useEffect(() => {
-  if (spinningColumns.some((spinning) => spinning)) {
-    const interval = setInterval(() => {
-      setColumnStates((prevStates) =>
-        prevStates.map((column, colIndex) => {
-          setPositions(Array(3).fill(0));
-          if (!column.spinning) return column;
+  useEffect(() => {
+    if (spinningColumns.some((spinning) => spinning)) {
+      const interval = setInterval(() => {
+        setColumnStates((prevStates) =>
+          prevStates.map((column, colIndex) => {
+            setPositions(Array(3).fill(0));
+            if (!column.spinning) return column;
 
-          const newAssets = [...column.assets];
-          const lastElement = newAssets.pop();
-          if (lastElement) {
-            newAssets.unshift(lastElement);
-            handleSpinning(colIndex);
-          }
+            const newAssets = [...column.assets];
+            const lastElement = newAssets.pop();
+            if (lastElement) {
+              newAssets.unshift(lastElement);
+              handleSpinning(colIndex);
+            }
 
-          // Ensure each column spins at least minSpinTimes times
-          if (spinCounters[colIndex] < minSpinTimes) {
+            // Ensure each column spins at least minSpinTimes times
+            if (spinCounters[colIndex] < minSpinTimes) {
+              setSpinCounters((prev) => {
+                const newCounters = [...prev];
+                newCounters[colIndex] += 1;
+                return newCounters;
+              });
+              return { ...column, assets: newAssets };
+            }
+
+            // Ensure a minimum stop interval between columns
+            const previousColumnStopped =
+              colIndex === 0 || !spinningColumns[colIndex - 1];
+            if (
+              previousColumnStopped &&
+              (colIndex === 0 ||
+                spinCounters[colIndex] >=
+                  spinCounters[colIndex - 1] + minStopSpinInterval)
+            ) {
+              if (newAssets[2].value === desiredNums![colIndex]) {
+                setSpinningColumns((prev) => {
+                  const newSpinningColumns = [...prev];
+                  newSpinningColumns[colIndex] = false;
+                  tickers[colIndex].stop();
+                  setSpinCounters(Array(3).fill(0));
+                  return newSpinningColumns;
+                });
+                return {
+                  ...column,
+                  assets: newAssets,
+                  spinning: false,
+                };
+              }
+            }
+
+            // Increment the spin counter
             setSpinCounters((prev) => {
               const newCounters = [...prev];
               newCounters[colIndex] += 1;
               return newCounters;
             });
+
             return { ...column, assets: newAssets };
-          }
+          })
+        );
+      }, spinIntervalDuration);
 
-          // Ensure a minimum stop interval between columns
-          const previousColumnStopped =
-            colIndex === 0 || !spinningColumns[colIndex - 1];
-          if (
-            previousColumnStopped &&
-            (colIndex === 0 ||
-              spinCounters[colIndex] >= spinCounters[colIndex - 1] + minStopSpinInterval)
-          ) {
-            if (newAssets[2].value === desiredNums![colIndex]) {
-              setSpinningColumns((prev) => {
-                const newSpinningColumns = [...prev];
-                newSpinningColumns[colIndex] = false;
-                tickers[colIndex].stop();
-                setSpinCounters(Array(3).fill(0))
-                return newSpinningColumns;
-              });
-              return {
-                ...column,
-                assets: newAssets,
-                spinning: false,
-              };
-            }
-          }
-
-          // Increment the spin counter
-          setSpinCounters((prev) => {
-            const newCounters = [...prev];
-            newCounters[colIndex] += 1;
-            return newCounters;
-          });
-
-          return { ...column, assets: newAssets };
-        })
-      );
-    }, spinIntervalDuration);
-
-    return () => clearInterval(interval);
-  }
-}, [spinningColumns, desiredNums, spinCounters]);
-
+      return () => clearInterval(interval);
+    }
+  }, [spinningColumns, desiredNums, spinCounters]);
 
   const handleSpinning = (columnIndex: number) => {
     const move = (delta: any) => {
@@ -147,7 +147,7 @@ useEffect(() => {
       }
       setPositions(() => [
         ...positions,
-        (positions[columnIndex] += slotHeight / 30),
+        (positions[columnIndex] += slotHeight / frameRate),
       ]);
     };
 
