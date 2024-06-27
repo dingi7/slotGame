@@ -1,6 +1,6 @@
 import { RefreshCcw } from "lucide-react";
 
-export const SlotMachineFooter = ({isMobile, balance, fixedBetAmounts, betAmount, setBetAmount, spinningColumns, startSpinning, lastWin}:{
+export const SlotMachineFooter = ({isMobile, balance, fixedBetAmounts, betAmount, setBetAmount, spinningColumns, startSpinning, lastWin, isButtonDisabled}:{
     isMobile: boolean;
     balance: number;
     fixedBetAmounts: number[];
@@ -9,6 +9,7 @@ export const SlotMachineFooter = ({isMobile, balance, fixedBetAmounts, betAmount
     spinningColumns: boolean[];
     startSpinning: () => void;
     lastWin: number;
+    isButtonDisabled: boolean;
 }) => {
     return (
         <div
@@ -67,7 +68,7 @@ export const SlotMachineFooter = ({isMobile, balance, fixedBetAmounts, betAmount
             onClick={() => {
               startSpinning();
             }}
-            disabled={spinningColumns.some((x) => x === true)}
+            disabled={spinningColumns.some((x) => x === true) || isButtonDisabled}
           >
             <RefreshCcw
               className={`opacity-100 ${

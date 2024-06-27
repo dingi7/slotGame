@@ -1,10 +1,9 @@
-
-
+import { InsufficientFundsModal } from "./InsufficientFundsModal";
+import { SlotMachineCanvas } from "./SlotMachineCanvas";
 import { SlotMachineFooter } from "./SlotMachineFooter";
 import { WinningModal } from "./WinningModal";
 import slotBackground from "../assets/slot-background.jpg";
 import { useSlotMachineState } from "../hooks/ useSlotMachineState";
-import { SlotMachineCanvas } from "./SlotMachineCanvas";
 
 export const SlotMachine: React.FC = () => {
   const {
@@ -23,15 +22,19 @@ export const SlotMachine: React.FC = () => {
     setBetAmount,
     startSpinning,
     balance,
+    isButtonDisabled,
   } = useSlotMachineState();
-
 
   return (
     <div
-      className={`w-full h-full flex flex-col justify-center items-center gap-5 bg-[url(${slotBackground})] ${isMobile && 'bg-cover'} text-white overflow-hidden`}
+      className={`w-full h-full flex flex-col justify-center items-center gap-5 bg-[url(${slotBackground})] ${
+        isMobile && "bg-cover"
+      } text-white overflow-hidden`}
       style={{ backgroundImage: `url(${slotBackground})` }}
     >
-      {isModalOpen && lastWin && <WinningModal winAmmount={lastWin} />}
+      {isModalOpen.win && lastWin && <WinningModal winAmmount={lastWin} />}
+      {isModalOpen.incificientFunds && <InsufficientFundsModal />}
+
       <div className="w-full h-full flex flex-col justify-center items-center">
         <div className="flex gap-4 pt-[2%]">
           <p className="uppercase text-yellow-400 text-2xl font-semibold text-shadow-superhot">
@@ -51,13 +54,17 @@ export const SlotMachine: React.FC = () => {
 
         {isMobile && (
           <div className="mb-[10%] flex flex-col gap-2">
-            <p className="uppercase text-xs text-slate-300">please, place your bet</p>
+            <p className="uppercase text-xs text-slate-300">
+              please, place your bet
+            </p>
             <div className={`flex flex-row gap-2 md:gap-4`}>
               {fixedBetAmounts.map((x) => (
                 <div
                   key={x}
                   className={`border-slate-200 border-2 px-4 py-2 rounded-md cursor-pointer shadow shadow-slate-500 text-sm md:text-base ${
-                    betAmount === x ? ' bg-gradient-to-b from-green-500 to-green-800' : 'bg-stone-600'
+                    betAmount === x
+                      ? " bg-gradient-to-b from-green-500 to-green-800"
+                      : "bg-stone-600"
                   }`}
                   onClick={() => setBetAmount(x)}
                 >
@@ -81,6 +88,7 @@ export const SlotMachine: React.FC = () => {
         startSpinning={startSpinning}
         spinningColumns={spinningColumns}
         fixedBetAmounts={fixedBetAmounts}
+        isButtonDisabled={isButtonDisabled}
       />
     </div>
   );

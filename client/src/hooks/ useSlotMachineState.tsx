@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 
 import { playSound, stopSound } from "../utils/soundPlayer";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { initializeAssetsMatrix } from "../utils/slotMachineUtils";
 import { sendSpinRequest } from "../api/requests";
@@ -22,15 +22,20 @@ export const useSlotMachineState = () => {
   const [balance, setBalance] = useState(5000);
   const [lastWin, setLastWin] = useState(0);
   const [desiredNums, setDesiredNums] = useState<number[]>();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState({
+    win: false,
+    incificientFunds: false,
+  });
 
   const tickers: PIXI.Ticker[] = Array(3).fill(new PIXI.Ticker());
-  const [spinIntervalDuration, setspinIntervalDuration] = useState(60);
+  const [spinIntervalDuration] = useState(60);
   const minSpinTimes = 10;
   const minStopSpinInterval = 3;
   const [spinCounters, setSpinCounters] = useState(Array(3).fill(0));
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const frameRate = 10;
+  const btnDissableDuration = 3000; // 3 sec
 
   const handleSpinRequest = async () => {
     const result = await sendSpinRequest(betAmount);
@@ -50,12 +55,22 @@ export const useSlotMachineState = () => {
       }, 4000);
       setBalance((prevBalance) => prevBalance + result.payout);
       setLastWin(result.payout);
+      setIsModalOpen((prevState) => ({ ...prevState, win: true }));
+      setIsButtonDisabled(true);
+      setTimeout(() => {
+        setIsButtonDisabled(false);
+      }, btnDissableDuration);
     }
     return result;
   };
 
   const startSpinning = async () => {
-    setIsModalOpen(false);
+    setIsModalOpen((prevState) => ({ ...prevState, incificientFunds: false }));
+    setIsModalOpen((prevState) => ({ ...prevState, win: false }));
+    if (balance - betAmount < 0) {
+      setIsModalOpen((prevState) => ({ ...prevState, incificientFunds: true }));
+      return;
+    }
     stopSound();
     playSound(spinningSound);
     setColumnStates((prevStates) =>
@@ -177,5 +192,6 @@ export const useSlotMachineState = () => {
     setBetAmount,
     startSpinning,
     balance,
+    isButtonDisabled,
   };
 };
