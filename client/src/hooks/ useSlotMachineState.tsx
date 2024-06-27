@@ -89,7 +89,6 @@ export const useSlotMachineState = () => {
               handleSpinning(colIndex);
             }
 
-            // Ensure each column spins at least minSpinTimes times
             if (spinCounters[colIndex] < minSpinTimes) {
               setSpinCounters((prev) => {
                 const newCounters = [...prev];
@@ -99,7 +98,6 @@ export const useSlotMachineState = () => {
               return { ...column, assets: newAssets };
             }
 
-            // Ensure a minimum stop interval between columns
             const previousColumnStopped =
               colIndex === 0 || !spinningColumns[colIndex - 1];
             if (
@@ -124,7 +122,6 @@ export const useSlotMachineState = () => {
               }
             }
 
-            // Increment the spin counter
             setSpinCounters((prev) => {
               const newCounters = [...prev];
               newCounters[colIndex] += 1;
