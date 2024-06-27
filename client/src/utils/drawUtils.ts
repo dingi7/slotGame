@@ -7,7 +7,7 @@ export const drawRect = (graphics: PIXI.Graphics, windowWidth: number, slotHeigh
   graphics.beginFill(fillColor, 1);
   graphics.drawRoundedRect(
     0,
-    0,
+    slotHeight,
     windowWidth * 0.11 * (isMobile ? 2 : 1),
     slotHeight * 3,
     5

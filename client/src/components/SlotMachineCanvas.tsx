@@ -1,9 +1,11 @@
-import React from 'react';
-import { Stage, Graphics } from '@pixi/react';
 import * as PIXI from 'pixi.js';
-import { drawLine } from '../utils/drawUtils';
+
+import { Graphics, Stage } from '@pixi/react';
+
 import { ColumnStateType } from '../types/slotMachineTypes';
+import React from 'react';
 import { SlotReel } from './SlotReel';
+import { drawLine } from '../utils/drawUtils';
 
 interface SlotMachineCanvasProps {
   columnStates: ColumnStateType[];

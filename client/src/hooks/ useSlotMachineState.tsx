@@ -25,7 +25,12 @@ export const useSlotMachineState = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const tickers: PIXI.Ticker[] = Array(3).fill(new PIXI.Ticker());
-  const spinDuration = 80;
+  const [spinIntervalDuration, setspinIntervalDuration] = useState(60);
+  const minSpinTimes = 10;
+  const minStopSpinInterval = 3
+  const [spinCounters, setSpinCounters] = useState(Array(3).fill(0));
+
+
 
   const handleSpinRequest = async () => {
     const result = await sendSpinRequest(betAmount);
@@ -45,11 +50,6 @@ export const useSlotMachineState = () => {
       }, 4000);
       setBalance((prevBalance) => prevBalance + result.payout);
       setLastWin(result.payout);
-
-      // Show modal after 1 second for better UX
-      setTimeout(() => {
-        setIsModalOpen(true);
-      }, 1000);
     }
     return result;
   };
@@ -74,25 +74,45 @@ export const useSlotMachineState = () => {
     }
   }, [columnStates]);
 
-  useEffect(() => {
-    if (spinningColumns.some((spinning) => spinning)) {
-      const interval = setInterval(() => {
-        setColumnStates((prevStates) =>
-          prevStates.map((column, colIndex) => {
-            setPositions(Array(3).fill(0));
-            if (!column.spinning) return column;
-            const newAssets = [...column.assets];
+useEffect(() => {
+  if (spinningColumns.some((spinning) => spinning)) {
+    const interval = setInterval(() => {
+      setColumnStates((prevStates) =>
+        prevStates.map((column, colIndex) => {
+          setPositions(Array(3).fill(0));
+          if (!column.spinning) return column;
 
-            const lastElement = newAssets.pop();
-            if (lastElement) {
-              newAssets.unshift(lastElement);
-              handleSpinning(colIndex);
-            }
-            if (newAssets[1].value === desiredNums![colIndex]) {
+          const newAssets = [...column.assets];
+          const lastElement = newAssets.pop();
+          if (lastElement) {
+            newAssets.unshift(lastElement);
+            handleSpinning(colIndex);
+          }
+
+          // Ensure each column spins at least minSpinTimes times
+          if (spinCounters[colIndex] < minSpinTimes) {
+            setSpinCounters((prev) => {
+              const newCounters = [...prev];
+              newCounters[colIndex] += 1;
+              return newCounters;
+            });
+            return { ...column, assets: newAssets };
+          }
+
+          // Ensure a minimum stop interval between columns
+          const previousColumnStopped =
+            colIndex === 0 || !spinningColumns[colIndex - 1];
+          if (
+            previousColumnStopped &&
+            (colIndex === 0 ||
+              spinCounters[colIndex] >= spinCounters[colIndex - 1] + minStopSpinInterval)
+          ) {
+            if (newAssets[2].value === desiredNums![colIndex]) {
               setSpinningColumns((prev) => {
                 const newSpinningColumns = [...prev];
                 newSpinningColumns[colIndex] = false;
                 tickers[colIndex].stop();
+                setSpinCounters(Array(3).fill(0))
                 return newSpinningColumns;
               });
               return {
@@ -101,21 +121,34 @@ export const useSlotMachineState = () => {
                 spinning: false,
               };
             }
-            return { ...column, assets: newAssets };
-          })
-        );
-      }, spinDuration);
+          }
 
-      return () => clearInterval(interval);
-    }
-  }, [spinningColumns, desiredNums]);
+          // Increment the spin counter
+          setSpinCounters((prev) => {
+            const newCounters = [...prev];
+            newCounters[colIndex] += 1;
+            return newCounters;
+          });
+
+          return { ...column, assets: newAssets };
+        })
+      );
+    }, spinIntervalDuration);
+
+    return () => clearInterval(interval);
+  }
+}, [spinningColumns, desiredNums, spinCounters]);
+
 
   const handleSpinning = (columnIndex: number) => {
     const move = (delta: any) => {
       if (positions[columnIndex] + 1 >= slotHeight) {
         return;
       }
-      setPositions(() => [...positions, (positions[columnIndex] += 1)]);
+      setPositions(() => [
+        ...positions,
+        (positions[columnIndex] += slotHeight / 30),
+      ]);
     };
 
     tickers[columnIndex]
