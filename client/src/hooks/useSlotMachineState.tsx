@@ -47,6 +47,7 @@ export const useSlotMachineState = () => {
   const [isModalOpen, setIsModalOpen] = useState({
     win: false,
     incificientFunds: false,
+    doubleWinAmountModal: false
   });
 
   const [spinCounters, setSpinCounters] = useState(Array(columnsCount).fill(0));
@@ -192,11 +193,16 @@ export const useSlotMachineState = () => {
     };
 
     tickers[columnIndex]
-      .add((delta) => {
-        move(delta);
+      .add(() => {
+        move();
       })
       .start();
   };
+
+  const openDoubleWinAmountModal = () => {
+      setIsModalOpen((prevState) => ({ ...prevState, doubleWinAmountModal: true }));
+  }
+  
 
   return {
     isMobile,
@@ -215,6 +221,7 @@ export const useSlotMachineState = () => {
     startSpinning,
     balance,
     isButtonDisabled,
-    handleBetAmountChange
+    handleBetAmountChange,
+    openDoubleWinAmountModal
   };
 };

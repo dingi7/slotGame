@@ -1,6 +1,7 @@
 import { Landmark, RefreshCcw } from "lucide-react";
+
+import OptionsModal from "./modals/OptionsModal";
 import { useState } from "react";
-import OptionsModal from "./OptionsModal";
 
 export const SlotMachineFooter = ({
   isMobile,
@@ -12,7 +13,8 @@ export const SlotMachineFooter = ({
   startSpinning,
   lastWin,
   isButtonDisabled,
-  handleBetAmountChange
+  handleBetAmountChange,
+  openDoubleWinAmountModal,
 }: {
   isMobile: boolean;
   balance: number;
@@ -23,10 +25,11 @@ export const SlotMachineFooter = ({
   startSpinning: () => void;
   lastWin: number;
   isButtonDisabled: boolean;
-  handleBetAmountChange: (number : number) => void;
+  handleBetAmountChange: (number: number) => void;
+  openDoubleWinAmountModal: () => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  console.log(isOpen)
+  console.log(isOpen);
   const toggleModal = () => {
     setIsOpen(!isOpen);
   };
@@ -67,13 +70,18 @@ export const SlotMachineFooter = ({
           </div>
         </div>
       )}
-      <button className=" bg-stone-900/50 p-[2.5%] rounded-full border-2 border-slate-200 "
+      <button
+        className=" bg-stone-900/50 p-[2.5%] rounded-full border-2 border-slate-200 "
         onClick={toggleModal}
       >
         <Landmark />
       </button>
 
-      <OptionsModal toggleModal={toggleModal} isOpen={isOpen} handleBetAmountChange={handleBetAmountChange} />
+      <OptionsModal
+        toggleModal={toggleModal}
+        isOpen={isOpen}
+        handleBetAmountChange={handleBetAmountChange}
+      />
 
       {isMobile && (
         <button
@@ -90,19 +98,33 @@ export const SlotMachineFooter = ({
       )}
 
       {!isMobile && (
-        <button
-          className=" bg-stone-900/50 p-[2.5%] rounded-full border-2 border-slate-200"
-          onClick={() => {
-            startSpinning();
-          }}
-          disabled={spinningColumns.some((x) => x === true) || isButtonDisabled}
-        >
-          <RefreshCcw
-            className={`opacity-100 ${
-              spinningColumns.some((x) => x === true) ? "animate-spin" : ""
-            }`}
-          />
-        </button>
+        <div className="flex justify-between items-center h-full gap-[4%]">
+          <button
+            className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square"
+            onClick={startSpinning}
+            disabled={
+              spinningColumns.some((x) => x === true) || isButtonDisabled
+            }
+          >
+            <RefreshCcw
+              className={`opacity-100 ${
+                spinningColumns.some((x) => x === true) ? "animate-spin" : ""
+              }`}
+            />
+          </button>
+          <button
+            className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-2/3 aspect-square"
+            onClick={openDoubleWinAmountModal}
+            disabled={
+              spinningColumns.some((x) => x === true) || isButtonDisabled
+            }
+          >
+            <p className="flex items-baseline gap-[10%] font-semibold">
+              <span className="text-base">X</span>
+              <span className="text-2xl">2</span>
+            </p>
+          </button>
+        </div>
       )}
 
       <div className="uppercase">

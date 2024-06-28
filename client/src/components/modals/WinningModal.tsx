@@ -1,6 +1,6 @@
-import bigWinText from "../assets/bigWin.png"
-import moneyGif from "../assets/money.gif"
-import radialLight from "../assets/radialLight.png"
+import bigWinText from "../../assets/bigWin.png"
+import moneyGif from "../../assets/money.gif"
+import radialLight from "../../assets/radialLight.png"
 
 export const WinningModal = ({winAmmount}: {winAmmount: number}) => {
     return(

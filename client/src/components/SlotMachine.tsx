@@ -1,9 +1,10 @@
-import { InsufficientFundsModal } from "./InsufficientFundsModal";
+import { DoubleWinAmountModal } from "./modals/DoubleWinAmountModal";
+import { InsufficientFundsModal } from "./modals/InsufficientFundsModal";
 import { SlotMachineCanvas } from "./SlotMachineCanvas";
 import { SlotMachineFooter } from "./SlotMachineFooter";
-import { WinningModal } from "./WinningModal";
+import { WinningModal } from "./modals/WinningModal";
 import slotBackground from "../assets/background.png";
-import { useSlotMachineState } from "../hooks/ useSlotMachineState";
+import { useSlotMachineState } from "../hooks/useSlotMachineState";
 
 export const SlotMachine: React.FC = () => {
   const {
@@ -23,7 +24,8 @@ export const SlotMachine: React.FC = () => {
     startSpinning,
     balance,
     isButtonDisabled,
-    handleBetAmountChange
+    handleBetAmountChange,
+    openDoubleWinAmountModal,
   } = useSlotMachineState();
 
   return (
@@ -35,6 +37,7 @@ export const SlotMachine: React.FC = () => {
     >
       {isModalOpen.win && lastWin && <WinningModal winAmmount={lastWin} />}
       {isModalOpen.incificientFunds && <InsufficientFundsModal />}
+      {true && <DoubleWinAmountModal />}
 
       <div className="w-full h-full flex flex-col justify-center items-center">
         <div className="flex gap-4 pt-[2%]">
@@ -91,6 +94,7 @@ export const SlotMachine: React.FC = () => {
         fixedBetAmounts={fixedBetAmounts}
         isButtonDisabled={isButtonDisabled}
         handleBetAmountChange={handleBetAmountChange}
+        openDoubleWinAmountModal={openDoubleWinAmountModal}
       />
     </div>
   );
