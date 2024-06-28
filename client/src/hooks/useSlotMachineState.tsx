@@ -19,19 +19,22 @@ export const useSlotMachineState = () => {
   const slotHeight = windowWidth * 0.1 * (isMobile ? 2 : 1);
   const totalHeight = slotHeight * 3;
   const [spinIntervalDuration] = useState(60);
-  
-  const betOptions: { [key: number]: number[] } = { // Adjust the bet options here
-    1: [1 , 2, 3, 4, 5],
+
+  const betOptions: { [key: number]: number[] } = {
+    // Adjust the bet options here
+    1: [1, 2, 3, 4, 5],
     2: [5, 10, 15, 20, 25],
     3: [10, 20, 30, 40, 50],
     4: [20, 40, 60, 80, 100],
-  }
+  };
 
-  const [fixedBetAmounts, setFixedBetAmounts] = useState<number[]>(betOptions[1]);
+  const [fixedBetAmounts, setFixedBetAmounts] = useState<number[]>(
+    betOptions[1]
+  );
 
   const handleBetAmountChange = (betOption: number) => {
     setFixedBetAmounts(betOptions[betOption]);
-  }
+  };
 
   const tickers: PIXI.Ticker[] = Array(columnsCount).fill(new PIXI.Ticker());
 
@@ -47,7 +50,7 @@ export const useSlotMachineState = () => {
   const [isModalOpen, setIsModalOpen] = useState({
     win: false,
     incificientFunds: false,
-    doubleWinAmountModal: false
+    doubleWinAmountModal: false,
   });
 
   const [spinCounters, setSpinCounters] = useState(Array(columnsCount).fill(0));
@@ -83,8 +86,12 @@ export const useSlotMachineState = () => {
   };
 
   const startSpinning = async () => {
-    setIsModalOpen((prevState) => ({ ...prevState, incificientFunds: false }));
-    setIsModalOpen((prevState) => ({ ...prevState, win: false }));
+    setIsModalOpen((prevState) => ({
+      ...prevState,
+      incificientFunds: false,
+      win: false,
+      doubleWinAmountModal: false,
+    }));
     if (balance - betAmount < 0) {
       setIsModalOpen((prevState) => ({ ...prevState, incificientFunds: true }));
       return;
@@ -200,9 +207,11 @@ export const useSlotMachineState = () => {
   };
 
   const openDoubleWinAmountModal = () => {
-      setIsModalOpen((prevState) => ({ ...prevState, doubleWinAmountModal: true }));
-  }
-  
+    setIsModalOpen((prevState) => ({
+      ...prevState,
+      doubleWinAmountModal: true,
+    }));
+  };
 
   return {
     isMobile,
@@ -222,6 +231,6 @@ export const useSlotMachineState = () => {
     balance,
     isButtonDisabled,
     handleBetAmountChange,
-    openDoubleWinAmountModal
+    openDoubleWinAmountModal,
   };
 };
