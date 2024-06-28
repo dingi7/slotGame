@@ -9,16 +9,25 @@ import spinningSound from "../assets/spinning.wav";
 import winSound from "../assets/win.wav";
 
 export const useSlotMachineState = () => {
-  const fixedBetAmounts = [20, 40, 100, 200];
-  const [betAmount, setBetAmount] = useState(fixedBetAmounts[0]);
-  const [spinningColumns, setSpinningColumns] = useState(Array(3).fill(false));
-  const [columnStates, setColumnStates] = useState(initializeAssetsMatrix);
-  const [positions, setPositions] = useState(Array(3).fill(0));
-  const [showLine, setShowLine] = useState(false);
   const windowWidth = window.innerWidth;
+  const columnsCount = 3;
+  const frameRate = 10;
+  const btnDissableDuration = 3000; // 3 sec
+  const minSpinTimes = 10;
+  const minStopSpinInterval = 3;
   const isMobile = windowWidth <= 768;
   const slotHeight = windowWidth * 0.1 * (isMobile ? 2 : 1);
   const totalHeight = slotHeight * 3;
+  const [spinIntervalDuration] = useState(60);
+  const fixedBetAmounts = [20, 40, 100, 200];
+  const tickers: PIXI.Ticker[] = Array(columnsCount).fill(new PIXI.Ticker());
+
+  const [betAmount, setBetAmount] = useState(fixedBetAmounts[0]);
+  const [spinningColumns, setSpinningColumns] = useState(Array(3).fill(false));
+  const [columnStates, setColumnStates] = useState(initializeAssetsMatrix);
+  const [positions, setPositions] = useState(Array(columnsCount).fill(0));
+  const [showLine, setShowLine] = useState(false);
+
   const [balance, setBalance] = useState(5000);
   const [lastWin, setLastWin] = useState(0);
   const [desiredNums, setDesiredNums] = useState<number[]>();
@@ -27,15 +36,8 @@ export const useSlotMachineState = () => {
     incificientFunds: false,
   });
 
-  const tickers: PIXI.Ticker[] = Array(3).fill(new PIXI.Ticker());
-  const [spinIntervalDuration] = useState(60);
-  const minSpinTimes = 10;
-  const minStopSpinInterval = 3;
-  const [spinCounters, setSpinCounters] = useState(Array(3).fill(0));
+  const [spinCounters, setSpinCounters] = useState(Array(columnsCount).fill(0));
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
-  const frameRate = 10;
-  const btnDissableDuration = 3000; // 3 sec
 
   const handleSpinRequest = async () => {
     const result = await sendSpinRequest(betAmount);
@@ -76,8 +78,16 @@ export const useSlotMachineState = () => {
     setColumnStates((prevStates) =>
       prevStates.map((state) => ({ ...state, spinning: true }))
     );
-    setSpinningColumns(Array(3).fill(true));
+    setSpinningColumns(Array(columnsCount).fill(true));
     await handleSpinRequest();
+  };
+
+  const resetColumnPositions = (columnIndex?: number) => {
+    if (columnIndex) {
+      setPositions(() => [...positions, (positions[columnIndex] = 0)]);
+      return;
+    }
+    setPositions(Array(columnsCount).fill(0));
   };
 
   useEffect(() => {
@@ -92,9 +102,9 @@ export const useSlotMachineState = () => {
   useEffect(() => {
     if (spinningColumns.some((spinning) => spinning)) {
       const interval = setInterval(() => {
+        resetColumnPositions();
         setColumnStates((prevStates) =>
           prevStates.map((column, colIndex) => {
-            setPositions(Array(3).fill(0));
             if (!column.spinning) return column;
 
             const newAssets = [...column.assets];
@@ -126,7 +136,7 @@ export const useSlotMachineState = () => {
                   const newSpinningColumns = [...prev];
                   newSpinningColumns[colIndex] = false;
                   tickers[colIndex].stop();
-                  setSpinCounters(Array(3).fill(0));
+                  setSpinCounters(Array(columnsCount).fill(0));
                   return newSpinningColumns;
                 });
                 return {
@@ -153,13 +163,16 @@ export const useSlotMachineState = () => {
   }, [spinningColumns, desiredNums, spinCounters]);
 
   const handleSpinning = (columnIndex: number) => {
-    const move = (delta: any) => {
-      if (positions[columnIndex] + 1 >= slotHeight) {
+    const move = () => {
+      const distanceToMove = slotHeight / frameRate;
+      if (positions[columnIndex] + distanceToMove >= slotHeight) {
+        tickers[columnIndex].stop();
+        tickers[columnIndex].remove(move);
         return;
       }
       setPositions(() => [
         ...positions,
-        (positions[columnIndex] += slotHeight / frameRate),
+        (positions[columnIndex] += distanceToMove),
       ]);
     };
 
@@ -168,12 +181,6 @@ export const useSlotMachineState = () => {
         move(delta);
       })
       .start();
-
-    if (positions[columnIndex] >= slotHeight) {
-      tickers[columnIndex].stop();
-      tickers[columnIndex].remove(move);
-      setPositions(() => [...positions, (positions[columnIndex] = 0)]);
-    }
   };
 
   return {
