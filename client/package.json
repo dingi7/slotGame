@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@pixi/filter-blur": "^7.4.2",
     "@pixi/filter-glow": "^5.2.1",
     "@pixi/react": "^7.1.2",
     "@tweenjs/tween.js": "^23.1.2",
