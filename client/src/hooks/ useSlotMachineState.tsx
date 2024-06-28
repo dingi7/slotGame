@@ -57,7 +57,9 @@ export const useSlotMachineState = () => {
       }, 4000);
       setBalance((prevBalance) => prevBalance + result.payout);
       setLastWin(result.payout);
-      setIsModalOpen((prevState) => ({ ...prevState, win: true }));
+      setTimeout(() => {
+        setIsModalOpen((prevState) => ({ ...prevState, win: true }));
+      }, spinIntervalDuration);
       setIsButtonDisabled(true);
       setTimeout(() => {
         setIsButtonDisabled(false);
