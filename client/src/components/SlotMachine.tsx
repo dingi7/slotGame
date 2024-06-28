@@ -2,7 +2,7 @@ import { InsufficientFundsModal } from "./InsufficientFundsModal";
 import { SlotMachineCanvas } from "./SlotMachineCanvas";
 import { SlotMachineFooter } from "./SlotMachineFooter";
 import { WinningModal } from "./WinningModal";
-import slotBackground from "../assets/slot-background.jpg";
+import slotBackground from "../assets/background.png";
 import { useSlotMachineState } from "../hooks/ useSlotMachineState";
 
 export const SlotMachine: React.FC = () => {

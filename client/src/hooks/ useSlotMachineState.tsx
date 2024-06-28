@@ -98,10 +98,10 @@ export const useSlotMachineState = () => {
   };
 
   const resetColumnPositions = (columnIndex?: number) => {
-    if (columnIndex) {
-      setPositions(() => [...positions, (positions[columnIndex] = 0)]);
-      return;
-    }
+    // if (columnIndex) {
+    //   setPositions(() => [...positions, (positions[columnIndex] = 0)]);
+    //   return;
+    // }
     setPositions(Array(columnsCount).fill(0));
   };
 
