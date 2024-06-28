@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js';
 import { Container, Graphics, Sprite } from '@pixi/react';
 
 import { ColumnStateType } from '../types/slotMachineTypes';
+import { GlowFilter } from '@pixi/filter-glow';
 import React from 'react';
 import { drawRect } from '../utils/drawUtils';
 
@@ -52,6 +53,7 @@ export const SlotReel: React.FC<SlotColumnProps> = ({
                     x={isMobile ? windowWidth * 0.01 : windowWidth * 0.005}
                     width={windowWidth * 0.1 * (isMobile ? 2 : 1)}
                     height={slotHeight}
+                   
                 />
             ))}
         </Container>
