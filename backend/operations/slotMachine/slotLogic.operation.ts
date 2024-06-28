@@ -39,3 +39,11 @@ export function play(betAmount: number): [boolean, number, Slot] {
   let win = payout > 0 ? true : false;
   return [win, payout, result];
 }
+
+
+
+export function doubleOrNothing(betAmount: number) : [boolean, number] {
+  const result = Math.random() < 0.5 ? true : false;
+  const payout = result ? betAmount * 2 : 0;
+  return [result, payout];
+}
