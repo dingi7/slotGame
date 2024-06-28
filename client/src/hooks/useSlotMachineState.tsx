@@ -19,6 +19,7 @@ export const useSlotMachineState = () => {
   const slotHeight = windowWidth * 0.1 * (isMobile ? 2 : 1);
   const totalHeight = slotHeight * 3;
   const [spinIntervalDuration] = useState(60);
+  const [hasHandledWin, setHasHandledWin] = useState<boolean>(true)
 
   const betOptions: { [key: number]: number[] } = {
     // Adjust the bet options here
@@ -61,6 +62,7 @@ export const useSlotMachineState = () => {
     setBalance((prevBalance) => prevBalance - betAmount);
     setDesiredNums(Object.values(result.reels).map((num) => Number(num)));
     if (result.win) {
+      setHasHandledWin(false)
       playSound(winSound);
       setTimeout(() => {
         setShowLine(true);
@@ -86,6 +88,7 @@ export const useSlotMachineState = () => {
   };
 
   const startSpinning = async () => {
+    setHasHandledWin(true)
     setIsModalOpen((prevState) => ({
       ...prevState,
       incificientFunds: false,
@@ -232,5 +235,6 @@ export const useSlotMachineState = () => {
     isButtonDisabled,
     handleBetAmountChange,
     openDoubleWinAmountModal,
+    hasHandledWin
   };
 };

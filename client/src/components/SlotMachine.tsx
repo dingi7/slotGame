@@ -26,6 +26,7 @@ export const SlotMachine: React.FC = () => {
     isButtonDisabled,
     handleBetAmountChange,
     openDoubleWinAmountModal,
+    hasHandledWin
   } = useSlotMachineState();
 
   return (
@@ -37,7 +38,7 @@ export const SlotMachine: React.FC = () => {
     >
       {isModalOpen.win && lastWin && <WinningModal winAmmount={lastWin} />}
       {isModalOpen.incificientFunds && <InsufficientFundsModal />}
-      {true && <DoubleWinAmountModal />}
+      {isModalOpen.doubleWinAmountModal && <DoubleWinAmountModal />}
 
       <div className="w-full h-full flex flex-col justify-center items-center">
         <div className="flex gap-4 pt-[2%]">
@@ -95,6 +96,7 @@ export const SlotMachine: React.FC = () => {
         isButtonDisabled={isButtonDisabled}
         handleBetAmountChange={handleBetAmountChange}
         openDoubleWinAmountModal={openDoubleWinAmountModal}
+        hasHandledWin={hasHandledWin}
       />
     </div>
   );
