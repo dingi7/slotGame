@@ -19,7 +19,20 @@ export const useSlotMachineState = () => {
   const slotHeight = windowWidth * 0.1 * (isMobile ? 2 : 1);
   const totalHeight = slotHeight * 3;
   const [spinIntervalDuration] = useState(60);
-  const fixedBetAmounts = [20, 40, 100, 200];
+  
+  const betOptions: { [key: number]: number[] } = { // Adjust the bet options here
+    1: [1 , 2, 3, 4, 5],
+    2: [5, 10, 15, 20, 25],
+    3: [10, 20, 30, 40, 50],
+    4: [20, 40, 60, 80, 100],
+  }
+
+  const [fixedBetAmounts, setFixedBetAmounts] = useState<number[]>(betOptions[1]);
+
+  const handleBetAmountChange = (betOption: number) => {
+    setFixedBetAmounts(betOptions[betOption]);
+  }
+
   const tickers: PIXI.Ticker[] = Array(columnsCount).fill(new PIXI.Ticker());
 
   const [betAmount, setBetAmount] = useState(fixedBetAmounts[0]);
@@ -202,5 +215,6 @@ export const useSlotMachineState = () => {
     startSpinning,
     balance,
     isButtonDisabled,
+    handleBetAmountChange
   };
 };
