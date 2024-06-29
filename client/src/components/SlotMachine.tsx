@@ -3,6 +3,8 @@ import { InsufficientFundsModal } from "./modals/InsufficientFundsModal";
 import { SlotMachineCanvas } from "./SlotMachineCanvas";
 import { SlotMachineFooter } from "./SlotMachineFooter";
 import { WinningModal } from "./modals/WinningModal";
+import blackCard from "../assets/blackCard.png";
+import redCard from "../assets/redCard.png";
 import slotBackground from "../assets/background.png";
 import { useSlotMachineState } from "../hooks/useSlotMachineState";
 
@@ -26,7 +28,7 @@ export const SlotMachine: React.FC = () => {
     isButtonDisabled,
     handleBetAmountChange,
     openDoubleWinAmountModal,
-    hasHandledWin
+    hasHandledWin,
   } = useSlotMachineState();
 
   return (
@@ -38,7 +40,7 @@ export const SlotMachine: React.FC = () => {
     >
       {isModalOpen.win && lastWin && <WinningModal winAmmount={lastWin} />}
       {isModalOpen.incificientFunds && <InsufficientFundsModal />}
-      {isModalOpen.doubleWinAmountModal && <DoubleWinAmountModal />}
+      {true && <DoubleWinAmountModal cards={[redCard, blackCard]} isMobile={isMobile} betAmmount={betAmount}/>}
 
       <div className="w-full h-full flex flex-col justify-center items-center">
         <div className="flex gap-4 pt-[2%]">
