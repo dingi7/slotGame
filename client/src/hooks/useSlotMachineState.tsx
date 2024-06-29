@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
 
+import { ReelStateType, Reels } from "../types/slotMachineTypes";
 import { playSound, stopSound } from "../utils/soundPlayer";
 import { useEffect, useState } from "react";
 
@@ -7,7 +8,6 @@ import { initializeAssetsMatrix } from "../utils/slotMachineUtils";
 import { sendSpinRequest } from "../api/requests";
 import spinningSound from "../assets/spinning.wav";
 import winSound from "../assets/win.wav";
-import { ReelStateType, Reels } from "../types/slotMachineTypes";
 
 type ReelIndex = 0 | 1 | 2;
 

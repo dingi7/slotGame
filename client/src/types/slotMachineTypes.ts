@@ -8,7 +8,6 @@ export type Asset = {
 export type ReelStateType = {
   assets: Asset[];
   spinning: boolean;
-  middleRowIndex: number;
 };
 
 export type Reels = [ReelStateType, ReelStateType, ReelStateType];

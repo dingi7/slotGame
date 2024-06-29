@@ -1,14 +1,14 @@
 import * as PIXI from "pixi.js";
 
+import { Asset, ReelStateType } from "../types/slotMachineTypes";
 import { Container, Graphics, Sprite } from "@pixi/react";
 import { drawRectBackground, drawRectBorder } from "../utils/drawUtils";
 
 import { BlurFilter } from "@pixi/filter-blur";
-import { ColumnStateType } from "../types/slotMachineTypes";
 import React from "react";
 
 interface SlotColumnProps {
-  column: ColumnStateType;
+  column: ReelStateType;
   colIndex: number;
   slotHeight: number;
   windowWidth: number;
@@ -53,7 +53,7 @@ export const SlotReel: React.FC<SlotColumnProps> = ({
           drawRectBorder(g, windowWidth, slotHeight, isMobile)
         }
       />
-      {column.assets.slice(0, 4).map((asset, rowIndex) => (
+      {column.assets.slice(0, 4).map((asset: Asset, rowIndex: number) => (
         <Sprite
           key={rowIndex}
           image={asset.image}

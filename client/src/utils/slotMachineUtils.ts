@@ -1,4 +1,5 @@
-import { Reels, ReelStateType } from "../types/slotMachineTypes";
+import { ReelStateType, Reels } from "../types/slotMachineTypes";
+
 import { assets } from "../assets/reelAssets";
 
 const rowsPerReel = 3;
@@ -14,7 +15,6 @@ export const shuffleArray = (array: any[]): any[] => {
 const defaultState = (): ReelStateType => ({
   assets: shuffleArray([...assets]),
   spinning: false,
-  middleRowIndex: Math.floor(rowsPerReel / 2),
 });
 
 export const initializeAssetsMatrix = (): Reels => {
