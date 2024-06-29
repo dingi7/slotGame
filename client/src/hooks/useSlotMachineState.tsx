@@ -165,18 +165,20 @@ export const useSlotMachineState = () => {
                   reelIconsMoved[reelIndex] >=
                     reelIconsMoved[reelIndex - 1] + minIconsMoved)
               ) {
-                setSpinningColumns((prev) => {
-                  const newSpinningColumns = [...prev];
-                  newSpinningColumns[reelIndex] = false;
-                  tickers[reelIndex].stop();
-                  setReelIcons(Array(columnsCount).fill(0));
-                  return newSpinningColumns;
-                });
-                return {
-                  ...column,
-                  assets: newAssets,
-                  spinning: false,
-                };
+                if (newAssets[2].value === desiredNums![reelIndex]) {
+                  setSpinningColumns((prev) => {
+                    const newSpinningColumns = [...prev];
+                    newSpinningColumns[reelIndex] = false;
+                    tickers[reelIndex].stop();
+                    setReelIcons(Array(columnsCount).fill(0));
+                    return newSpinningColumns;
+                  });
+                  return {
+                    ...column,
+                    assets: newAssets,
+                    spinning: false,
+                  };
+                }
               }
 
               moveReelIcon(reelIndex as ReelIndex);
