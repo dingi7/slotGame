@@ -31,7 +31,6 @@ export const SlotMachineFooter = ({
   hasHandledWin: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  console.log(isOpen);
   const toggleModal = () => {
     setIsOpen(!isOpen);
   };

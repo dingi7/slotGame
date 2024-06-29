@@ -13,7 +13,7 @@ export const SlotMachine: React.FC = () => {
     slotHeight,
     totalHeight,
     columnStates,
-    spinningColumns,
+    spinningReels,
     positions,
     showLine,
     lastWin,
@@ -26,7 +26,7 @@ export const SlotMachine: React.FC = () => {
     isButtonDisabled,
     handleBetAmountChange,
     openDoubleWinAmountModal,
-    hasHandledWin
+    hasHandledWin,
   } = useSlotMachineState();
 
   return (
@@ -91,7 +91,7 @@ export const SlotMachine: React.FC = () => {
         betAmount={betAmount}
         setBetAmount={setBetAmount}
         startSpinning={startSpinning}
-        spinningColumns={spinningColumns}
+        spinningColumns={spinningReels}
         fixedBetAmounts={fixedBetAmounts}
         isButtonDisabled={isButtonDisabled}
         handleBetAmountChange={handleBetAmountChange}
