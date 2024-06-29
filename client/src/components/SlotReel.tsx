@@ -1,11 +1,11 @@
 import * as PIXI from "pixi.js";
 
 import { Container, Graphics, Sprite } from "@pixi/react";
+import { drawRectBackground, drawRectBorder } from "../utils/drawUtils";
 
 import { BlurFilter } from "@pixi/filter-blur";
 import { ColumnStateType } from "../types/slotMachineTypes";
 import React from "react";
-import { drawRect } from "../utils/drawUtils";
 
 interface SlotColumnProps {
   column: ColumnStateType;
@@ -37,9 +37,20 @@ export const SlotReel: React.FC<SlotColumnProps> = ({
       y={-slotHeight}
       key={colIndex}
     >
-      <Graphics
+      {/* <Graphics
         draw={(g: PIXI.Graphics) =>
           drawRect(g, windowWidth, slotHeight, isMobile)
+        }
+      /> */}
+      <Graphics
+        draw={(g: PIXI.Graphics) =>
+          drawRectBackground(g, windowWidth, slotHeight, isMobile)
+        }
+      />
+
+      <Graphics
+        draw={(g: PIXI.Graphics) =>
+          drawRectBorder(g, windowWidth, slotHeight, isMobile)
         }
       />
       {column.assets.slice(0, 4).map((asset, rowIndex) => (
@@ -47,10 +58,9 @@ export const SlotReel: React.FC<SlotColumnProps> = ({
           key={rowIndex}
           image={asset.image}
           y={(positions[colIndex] + rowIndex * slotHeight) % (totalHeight * 2)}
-          x={isMobile ? windowWidth * 0.01 : windowWidth * 0.005}
-          width={windowWidth * 0.1 * (isMobile ? 2 : 1)}
+          x={isMobile ? windowWidth * 0.01 : windowWidth * 0.00095}
+          width={windowWidth * 0.1 * (isMobile ? 2 : 1.07)}
           height={slotHeight}
-
         />
       ))}
     </Container>
