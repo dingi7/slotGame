@@ -1,12 +1,12 @@
-import * as PIXI from 'pixi.js';
 
 export type Asset = {
-    image: string;
-    value: number;
-  };
+  image: string;
+  value: number;
+};
 
-export type ColumnStateType = {
-    assets: Asset[];
-    spinning: boolean;
-    middleRowIndex: number;
-  };
+export type ReelStateType = {
+  assets: Asset[];
+  spinning: boolean;
+};
+
+export type Reels = [ReelStateType, ReelStateType, ReelStateType];

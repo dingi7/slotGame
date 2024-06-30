@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
 
+import { ReelStateType, Reels } from "../types/slotMachineTypes";
 import { playSound, stopSound } from "../utils/soundPlayer";
 import { useEffect, useState } from "react";
 
@@ -8,18 +9,20 @@ import { sendSpinRequest } from "../api/requests";
 import spinningSound from "../assets/spinning.wav";
 import winSound from "../assets/win.wav";
 
+type ReelIndex = 0 | 1 | 2;
+
 export const useSlotMachineState = () => {
   const windowWidth = window.innerWidth;
   const columnsCount = 3;
   const frameRate = 10;
   const btnDissableDuration = 3000; // 3 sec
   const minSpinTimes = 10;
-  const minStopSpinInterval = 3;
+  const minIconsMoved = 3;
   const isMobile = windowWidth <= 768;
   const slotHeight = windowWidth * 0.1 * (isMobile ? 2 : 1);
   const totalHeight = slotHeight * 3;
   const [spinIntervalDuration] = useState(60);
-  const [hasHandledWin, setHasHandledWin] = useState<boolean>(true)
+  const [hasHandledWin, setHasHandledWin] = useState<boolean>(true);
 
   const betOptions: { [key: number]: number[] } = {
     // Adjust the bet options here
@@ -40,8 +43,10 @@ export const useSlotMachineState = () => {
   const tickers: PIXI.Ticker[] = Array(columnsCount).fill(new PIXI.Ticker());
 
   const [betAmount, setBetAmount] = useState(fixedBetAmounts[0]);
-  const [spinningColumns, setSpinningColumns] = useState(Array(3).fill(false));
-  const [columnStates, setColumnStates] = useState(initializeAssetsMatrix);
+  const [spinningReels, setSpinningColumns] = useState(Array(3).fill(false));
+  const [columnStates, setColumnStates] = useState<Reels>(
+    initializeAssetsMatrix
+  );
   const [positions, setPositions] = useState(Array(columnsCount).fill(0));
   const [showLine, setShowLine] = useState(false);
 
@@ -54,7 +59,7 @@ export const useSlotMachineState = () => {
     doubleWinAmountModal: false,
   });
 
-  const [spinCounters, setSpinCounters] = useState(Array(columnsCount).fill(0));
+  const [reelIconsMoved, setReelIcons] = useState(Array(columnsCount).fill(0));
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const handleSpinRequest = async () => {
@@ -62,7 +67,7 @@ export const useSlotMachineState = () => {
     setBalance((prevBalance) => prevBalance - betAmount);
     setDesiredNums(Object.values(result.reels).map((num) => Number(num)));
     if (result.win) {
-      setHasHandledWin(false)
+      setHasHandledWin(false);
       playSound(winSound);
       setTimeout(() => {
         setShowLine(true);
@@ -88,7 +93,7 @@ export const useSlotMachineState = () => {
   };
 
   const startSpinning = async () => {
-    setHasHandledWin(true)
+    setHasHandledWin(true);
     setIsModalOpen((prevState) => ({
       ...prevState,
       incificientFunds: false,
@@ -101,18 +106,23 @@ export const useSlotMachineState = () => {
     }
     stopSound();
     playSound(spinningSound);
-    setColumnStates((prevStates) =>
-      prevStates.map((state) => ({ ...state, spinning: true }))
+    setColumnStates(
+      (prevStates) =>
+        prevStates.map((state) => ({ ...state, spinning: true })) as Reels
     );
     setSpinningColumns(Array(columnsCount).fill(true));
     await handleSpinRequest();
   };
 
-  const resetColumnPositions = (columnIndex?: number) => {
-    // if (columnIndex) {
-    //   setPositions(() => [...positions, (positions[columnIndex] = 0)]);
-    //   return;
-    // }
+  const moveReelIcon = (reel: ReelIndex) => {
+    setReelIcons((prev) => {
+      const reelIcons = [...prev];
+      reelIcons[reel] += 1;
+      return reelIcons;
+    });
+  };
+
+  const resetColumnPositions = () => {
     setPositions(Array(columnsCount).fill(0));
   };
 
@@ -126,67 +136,61 @@ export const useSlotMachineState = () => {
   }, [columnStates]);
 
   useEffect(() => {
-    if (spinningColumns.some((spinning) => spinning)) {
+    if (spinningReels.some((spinning) => spinning)) {
       const interval = setInterval(() => {
         resetColumnPositions();
-        setColumnStates((prevStates) =>
-          prevStates.map((column, colIndex) => {
-            if (!column.spinning) return column;
+        setColumnStates(
+          (prevStates: Reels) =>
+            prevStates.map((column: ReelStateType, reelIndex: number) => {
+              if (!column.spinning) return column;
 
-            const newAssets = [...column.assets];
-            const lastElement = newAssets.pop();
-            if (lastElement) {
-              newAssets.unshift(lastElement);
-              handleSpinning(colIndex);
-            }
-
-            if (spinCounters[colIndex] < minSpinTimes) {
-              setSpinCounters((prev) => {
-                const newCounters = [...prev];
-                newCounters[colIndex] += 1;
-                return newCounters;
-              });
-              return { ...column, assets: newAssets };
-            }
-
-            const previousColumnStopped =
-              colIndex === 0 || !spinningColumns[colIndex - 1];
-            if (
-              previousColumnStopped &&
-              (colIndex === 0 ||
-                spinCounters[colIndex] >=
-                  spinCounters[colIndex - 1] + minStopSpinInterval)
-            ) {
-              if (newAssets[2].value === desiredNums![colIndex]) {
-                setSpinningColumns((prev) => {
-                  const newSpinningColumns = [...prev];
-                  newSpinningColumns[colIndex] = false;
-                  tickers[colIndex].stop();
-                  setSpinCounters(Array(columnsCount).fill(0));
-                  return newSpinningColumns;
-                });
-                return {
-                  ...column,
-                  assets: newAssets,
-                  spinning: false,
-                };
+              const newAssets = [...column.assets];
+              const lastElement = newAssets.pop();
+              if (lastElement) {
+                newAssets.unshift(lastElement);
+                handleSpinning(reelIndex);
               }
-            }
 
-            setSpinCounters((prev) => {
-              const newCounters = [...prev];
-              newCounters[colIndex] += 1;
-              return newCounters;
-            });
+              if (reelIconsMoved[reelIndex] < minSpinTimes) {
+                moveReelIcon(reelIndex as ReelIndex);
+                return { ...column, assets: newAssets };
+              }
 
-            return { ...column, assets: newAssets };
-          })
+              const previousReelStopped = !spinningReels[reelIndex - 1];
+              const isFirstReel = reelIndex === 0;
+
+              if (
+                isFirstReel ||
+                (previousReelStopped &&
+                  reelIconsMoved[reelIndex] >=
+                    reelIconsMoved[reelIndex - 1] + minIconsMoved)
+              ) {
+                if (newAssets[2].value === desiredNums![reelIndex]) {
+                  setSpinningColumns((prev) => {
+                    const newSpinningColumns = [...prev];
+                    newSpinningColumns[reelIndex] = false;
+                    tickers[reelIndex].stop();
+                    setReelIcons(Array(columnsCount).fill(0));
+                    return newSpinningColumns;
+                  });
+                  return {
+                    ...column,
+                    assets: newAssets,
+                    spinning: false,
+                  };
+                }
+              }
+
+              moveReelIcon(reelIndex as ReelIndex);
+
+              return { ...column, assets: newAssets };
+            }) as Reels
         );
       }, spinIntervalDuration);
 
       return () => clearInterval(interval);
     }
-  }, [spinningColumns, desiredNums, spinCounters]);
+  }, [spinningReels, desiredNums, reelIconsMoved]);
 
   const handleSpinning = (columnIndex: number) => {
     const move = () => {
@@ -222,7 +226,7 @@ export const useSlotMachineState = () => {
     slotHeight,
     totalHeight,
     columnStates,
-    spinningColumns,
+    spinningReels,
     positions,
     showLine,
     lastWin,
@@ -235,6 +239,6 @@ export const useSlotMachineState = () => {
     isButtonDisabled,
     handleBetAmountChange,
     openDoubleWinAmountModal,
-    hasHandledWin
+    hasHandledWin,
   };
 };

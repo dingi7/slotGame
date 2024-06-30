@@ -3,13 +3,29 @@ const endpoints = {
     double: 'http://localhost:8000/double',
 };
 
+// export interface SpinResponseData {
+//     win: boolean;
+//     payout: number;
+//     reels: {
+//         reel1: number;
+//         reel2: number;
+//         reel3: number;
+//     };
+// }
+
 export interface SpinResponseData {
     win: boolean;
     payout: number;
     reels: {
-        reel1: number;
-        reel2: number;
-        reel3: number;
+        reel1_1: number;
+        reel1_2: number;
+        reel1_3: number;
+        reel2_1: number;
+        reel2_2: number;
+        reel2_3: number;
+        reel3_1: number;
+        reel3_2: number;
+        reel3_3: number;
     };
 }
 
