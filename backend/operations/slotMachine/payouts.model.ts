@@ -17,17 +17,11 @@ export type Reel = GameSymbol[];
 
 export type Slot = [GameSymbol, GameSymbol, GameSymbol];
 
-export type Slot3x3 = [
-    GameSymbol,
-    GameSymbol,
-    GameSymbol,
-    GameSymbol,
-    GameSymbol,
-    GameSymbol,
-    GameSymbol,
-    GameSymbol,
-    GameSymbol
-];
+export type Slot3x3 = {
+    reel1: [GameSymbol, GameSymbol, GameSymbol];
+    reel2: [GameSymbol, GameSymbol, GameSymbol];
+    reel3: [GameSymbol, GameSymbol, GameSymbol];
+};
 
 export const payouts: Payouts = {
     '000': 1,

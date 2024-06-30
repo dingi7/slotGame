@@ -12,21 +12,15 @@ function spinReel(reel: Reel): GameSymbol {
 }
 
 function spin(): Slot3x3 {
-    return [
-        spinReel(reels[0]),
-        spinReel(reels[1]),
-        spinReel(reels[2]),
-        spinReel(reels[0]),
-        spinReel(reels[1]),
-        spinReel(reels[2]),
-        spinReel(reels[0]),
-        spinReel(reels[1]),
-        spinReel(reels[2]),
-    ];
+    return {
+        reel1: [spinReel(reels[0]), spinReel(reels[1]), spinReel(reels[2])],
+        reel2: [spinReel(reels[0]), spinReel(reels[1]), spinReel(reels[2])],
+        reel3: [spinReel(reels[0]), spinReel(reels[1]), spinReel(reels[2])],
+    };
 }
 
 function calculatePayout(result: Slot3x3, betAmount: number): number {
-    const combination = result.join('');
+    const combination = result.reel2.join(''); // calculate other possible wins
     let payout = 0;
 
     if (combination === '777') {
