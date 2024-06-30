@@ -11,12 +11,18 @@ function spinReel(reel: Reel): GameSymbol {
     return reel[randIndex];
 }
 
-// function spin(): Slot {
 function spin(): Slot3x3 {
-    // return [spinReel(reels[0]), spinReel(reels[1]), spinReel(reels[2])];
-    return [spinReel(reels[0]), spinReel(reels[1]), spinReel(reels[2]), spinReel(reels[0]), spinReel(reels[1]), spinReel(reels[2]), spinReel(reels[0]), spinReel(reels[1]), spinReel(reels[2])];
-
-    
+    return [
+        spinReel(reels[0]),
+        spinReel(reels[1]),
+        spinReel(reels[2]),
+        spinReel(reels[0]),
+        spinReel(reels[1]),
+        spinReel(reels[2]),
+        spinReel(reels[0]),
+        spinReel(reels[1]),
+        spinReel(reels[2]),
+    ];
 }
 
 function calculatePayout(result: Slot3x3, betAmount: number): number {
@@ -33,7 +39,6 @@ function calculatePayout(result: Slot3x3, betAmount: number): number {
         payout = payouts[combination];
     }
 
-    // return payout * betAmount * 0.096; // Adjusting to get approximately 96% RTP
     return payout * betAmount; // Adjusting to get approximately 96% RTP
 }
 
