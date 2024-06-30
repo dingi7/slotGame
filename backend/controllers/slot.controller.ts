@@ -4,15 +4,21 @@ import { doubleOrNothing, play } from "../operations/slotMachine/slotLogic.opera
 const Post = (req: Request, res: Response) => {
   const { betAmount } = req.body;
 
-  const [win, payout, [reel1, reel2, reel3]] = play(betAmount);
+  const [win, payout, [reel1_1, reel1_2, reel1_3, reel2_1, reel2_2, reel2_3, reel3_1, reel3_2, reel3_3]] = play(betAmount);
 
   res.json({
     win,
     payout,
     reels: {
-      reel1,
-      reel2,
-      reel3,
+      reel1_1,
+      reel1_2,
+      reel1_3,
+      reel2_1,
+      reel2_2,
+      reel2_3,
+      reel3_1,
+      reel3_2,
+      reel3_3,
     },
   });
 };

@@ -4,7 +4,6 @@ import { Asset, ReelStateType } from "../types/slotMachineTypes";
 import { Container, Graphics, Sprite } from "@pixi/react";
 import { drawRectBackground, drawRectBorder } from "../utils/drawUtils";
 
-import { BlurFilter } from "@pixi/filter-blur";
 import React from "react";
 
 interface SlotColumnProps {
