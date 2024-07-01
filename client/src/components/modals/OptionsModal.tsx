@@ -1,10 +1,10 @@
 type Props = {
-  toggleModal: () => void;
+  closeModal: () => void;
   isOpen: boolean;
   handleBetAmountChange: (number: number) => void;
 };
 
-const OptionsModal = ({ toggleModal, isOpen, handleBetAmountChange }: Props) => {
+const OptionsModal = ({ closeModal, isOpen, handleBetAmountChange }: Props) => {
   return (
     <>
       {isOpen && (
@@ -23,7 +23,7 @@ const OptionsModal = ({ toggleModal, isOpen, handleBetAmountChange }: Props) => 
               ))}
             </div>
             <button
-              onClick={toggleModal}
+              onClick={closeModal}
               className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700"
             >
               Close

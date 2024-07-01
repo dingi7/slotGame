@@ -3,7 +3,6 @@ import { InsufficientFundsModal } from "./modals/InsufficientFundsModal";
 import { SlotMachineCanvas } from "./SlotMachineCanvas";
 import { SlotMachineFooter } from "./SlotMachineFooter";
 import { WinningModal } from "./modals/WinningModal";
-
 import slotBackground from "../assets/background.png";
 import { useSlotMachineState } from "../hooks/useSlotMachineState";
 
@@ -26,8 +25,11 @@ export const SlotMachine: React.FC = () => {
     balance,
     isButtonDisabled,
     handleBetAmountChange,
-    openDoubleWinAmountModal,
+    openModal,
+    closeModal,
     hasHandledWin,
+    payoutsHandler,
+    tempWinning,
   } = useSlotMachineState();
 
   return (
@@ -38,9 +40,11 @@ export const SlotMachine: React.FC = () => {
       style={{ backgroundImage: `url(${slotBackground})` }}
     >
       {isModalOpen.win && lastWin && <WinningModal winAmmount={lastWin} />}
-      {isModalOpen.incificientFunds && <InsufficientFundsModal />}
+      {isModalOpen.insufficientFunds && <InsufficientFundsModal />}
       {/* {isModalOpen.doubleWinAmountModal && <DoubleWinAmountModal cards={[redCard, blackCard]} betAmmount={betAmount}/>} */}
-      {true && <DoubleWinAmountModal betAmmount={10}/>}
+      {isModalOpen.doubleWinAmountModal && (
+        <DoubleWinAmountModal betAmmount={tempWinning} payoutsHandler={payoutsHandler}/>
+      )}
 
       <div className="w-full h-full flex flex-col justify-center items-center">
         <div className="flex gap-4 pt-[2%] select-none">
@@ -97,8 +101,11 @@ export const SlotMachine: React.FC = () => {
         fixedBetAmounts={fixedBetAmounts}
         isButtonDisabled={isButtonDisabled}
         handleBetAmountChange={handleBetAmountChange}
-        openDoubleWinAmountModal={openDoubleWinAmountModal}
+        openDoubleWinAmountModal={() => openModal("doubleWinAmountModal")}
         hasHandledWin={hasHandledWin}
+        openOptionsModal={() => openModal("optionsModal")}
+        closeOptionsModal={() => closeModal("optionsModal")}
+        isOptionsModalOpen={isModalOpen.optionsModal}
       />
     </div>
   );

@@ -10,8 +10,10 @@ import winText from "../../assets/win.png";
 
 export const DoubleWinAmountModal = ({
   betAmmount,
+  payoutsHandler,
 }: {
   betAmmount: number;
+  payoutsHandler: (amount: number) => void;
 }) => {
   const cardBacks = [redCard, blackCard];
   const cardFronts = [AceRed, AceBlack];
@@ -39,6 +41,7 @@ export const DoubleWinAmountModal = ({
     if (result.result) {
       setSelectedCard(cardFronts[clickedChoice]);
       setHasWon(true);
+      payoutsHandler(betAmmount);
     } else {
       const otherChoice = clickedChoice === 0 ? 1 : 0;
       setSelectedCard(cardFronts[otherChoice]);
@@ -78,13 +81,26 @@ export const DoubleWinAmountModal = ({
           >
             <p>red</p>
           </button>
-          <div className="h-4/5 relative">
-            <img src={selectedCard} className="w-full h-full object-cover" />
+          <div className="w-4/5 relative flex justify-normal">
+            <img
+              src={selectedCard}
+              className="w-2/3 h-2/3 object-cover m-auto"
+            />
             {hasHandled &&
               (hasWan ? (
-                <img src={winText} alt="win text" className="absolute top-1/2 translate-y-[-50%]"/>
+                <img
+                  src={winText}
+                  alt="win text"
+                  className="absolute top-1/2 translate-y-[-50%]  "
+                  draggable={false}
+                />
               ) : (
-                <img src={lossText} alt="loss text" className="absolute top-1/2 translate-y-[-50%]"/>
+                <img
+                  src={lossText}
+                  alt="loss text"
+                  className="absolute top-1/2 translate-y-[-50%] "
+                  draggable={false}
+                />
               ))}
           </div>
           <button
