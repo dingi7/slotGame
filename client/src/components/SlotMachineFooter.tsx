@@ -93,9 +93,9 @@ export const SlotMachineFooter = ({
           <button
             className=" bg-stone-900/50 p-[2.5%]  h-full aspect-square flex justify-center items-center rounded-full border-2 border-slate-200 "
             onClick={startSpinning}
-            disabled={
-              isButtonDisabled
-            }
+             disabled={
+                spinningColumns.some((x) => x === true) || isButtonDisabled
+              }
           >
             {hasHandledWin ? (
               <RefreshCcw

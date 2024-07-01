@@ -43,7 +43,7 @@ export const SlotMachine: React.FC = () => {
       {isModalOpen.insufficientFunds && <InsufficientFundsModal />}
       {/* {isModalOpen.doubleWinAmountModal && <DoubleWinAmountModal cards={[redCard, blackCard]} betAmmount={betAmount}/>} */}
       {isModalOpen.doubleWinAmountModal && (
-        <DoubleWinAmountModal betAmmount={tempWinning} payoutsHandler={payoutsHandler}/>
+        <DoubleWinAmountModal betAmmount={tempWinning} payoutsHandler={payoutsHandler} closeModal={() => closeModal("doubleWinAmountModal")}/>
       )}
 
       <div className="w-full h-full flex flex-col justify-center items-center">

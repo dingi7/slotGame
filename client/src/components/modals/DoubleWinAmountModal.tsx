@@ -11,9 +11,11 @@ import winText from "../../assets/win.png";
 export const DoubleWinAmountModal = ({
   betAmmount,
   payoutsHandler,
+  closeModal,
 }: {
   betAmmount: number;
   payoutsHandler: (amount: number) => void;
+  closeModal: () => void;
 }) => {
   const cardBacks = [redCard, blackCard];
   const cardFronts = [AceRed, AceBlack];
@@ -47,6 +49,9 @@ export const DoubleWinAmountModal = ({
       setSelectedCard(cardFronts[otherChoice]);
     }
     setHasHandled(true);
+    setTimeout(() => {
+      closeModal()
+    }, 2000)
     console.log(result);
   };
 
@@ -84,7 +89,7 @@ export const DoubleWinAmountModal = ({
           <div className="w-4/5 relative flex justify-normal">
             <img
               src={selectedCard}
-              className="w-2/3 h-2/3 object-cover m-auto"
+              className="w-2/3 aspect-square  object-contain m-auto"
             />
             {hasHandled &&
               (hasWan ? (

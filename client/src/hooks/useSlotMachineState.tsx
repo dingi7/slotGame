@@ -58,6 +58,8 @@ export const useSlotMachineState = () => {
 
   const [tempWinning, setTempWinning] = useState<number>(0);
 
+  const [hasWon, setHasWon] = useState<boolean>(false);
+
   useEffect(() => {
     if (!desiredNums) {
       return;
@@ -73,9 +75,6 @@ export const useSlotMachineState = () => {
 
       for (let row = 0; row < rowsCount; row++) {
         const rowSymbols = desiredNums[row];
-
-        console.log("newState");
-        console.log(newState);
 
         rowSymbols.forEach((symbol: number, colIndex: number) => {
           const symbolIndex = newState[colIndex].assets.findIndex(
@@ -110,7 +109,7 @@ export const useSlotMachineState = () => {
     win: false,
     insufficientFunds: false,
     doubleWinAmountModal: false,
-    optionsModal: false
+    optionsModal: false,
   });
 
   const [reelIconsMoved, setReelIcons] = useState(Array(columnsCount).fill(0));
@@ -123,28 +122,8 @@ export const useSlotMachineState = () => {
       Object.values(result.reels).map((reel) => reel.map((num) => Number(num)))
     );
     if (result.win) {
-      setHasHandledWin(false);
-      playSound(winSound);
-      setTimeout(() => {
-        setShowLine(true);
-        const lineIntervalId = setInterval(() => {
-          setShowLine((prevShowLine) => !prevShowLine);
-        }, 500);
-        setTimeout(() => {
-          clearInterval(lineIntervalId);
-          setShowLine(false);
-        }, 3000);
-      }, 4000);
-
+      setHasWon(true);
       setTempWinning(result.payout);
-
-      setTimeout(() => {
-        openModal("win");
-      }, spinIntervalDuration);
-      setIsButtonDisabled(true);
-      setTimeout(() => {
-        setIsButtonDisabled(false);
-      }, btnDissableDuration);
     }
     return result;
   };
@@ -155,6 +134,7 @@ export const useSlotMachineState = () => {
   };
 
   const startSpinning = async () => {
+    setHasWon(false)
     setColumnStates(initializeAssetsMatrix);
     setHasHandledWin(true);
     closeModal();
@@ -193,6 +173,30 @@ export const useSlotMachineState = () => {
     );
     if (allStopped) {
       stopSound();
+
+      if (hasWon) {
+        setIsButtonDisabled(true);
+        setHasHandledWin(false);
+        playSound(winSound);
+        setTimeout(() => {
+          setShowLine(true);
+          const lineIntervalId = setInterval(() => {
+            setShowLine((prevShowLine) => !prevShowLine);
+          }, 500);
+          setTimeout(() => {
+            clearInterval(lineIntervalId);
+            setShowLine(false);
+          }, 3000);
+        }, 4000);
+
+        setTimeout(() => {
+          openModal("win");
+        }, spinIntervalDuration);
+
+        setTimeout(() => {
+          setIsButtonDisabled(false);
+        }, btnDissableDuration);
+      }
     }
   }, [columnStates]);
 
@@ -284,7 +288,11 @@ export const useSlotMachineState = () => {
   };
 
   const closeModal = (
-    modal?: "win" | "insufficientFunds" | "doubleWinAmountModal" | "optionsModal"
+    modal?:
+      | "win"
+      | "insufficientFunds"
+      | "doubleWinAmountModal"
+      | "optionsModal"
   ) => {
     if (!modal) {
       // Close all modals
@@ -292,7 +300,7 @@ export const useSlotMachineState = () => {
         win: false,
         insufficientFunds: false,
         doubleWinAmountModal: false,
-        optionsModal: false
+        optionsModal: false,
       });
       return;
     }
