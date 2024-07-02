@@ -25,4 +25,4 @@ server.listen(8000, () => {
 });
 
 
-// RTPtest()
+RTPtest()

@@ -7,10 +7,11 @@ export interface SpinResponseData {
     win: boolean;
     payout: number;
     reels: {
-        reel1: [number, number, number];
-        reel2: [number, number, number];
-        reel3: [number, number, number];
+        row1: [number, number, number];
+        row2: [number, number, number];
+        row3: [number, number, number];
     };
+    winningMatrix: boolean[][];
 }
 
 

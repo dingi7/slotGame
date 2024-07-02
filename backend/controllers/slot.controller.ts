@@ -7,12 +7,13 @@ import {
 const Post = (req: Request, res: Response) => {
     const { betAmount } = req.body;
 
-    const [win, payout, reels] = play(betAmount);
+    const [win, payout, reels, winningMatrix] = play(betAmount);
 
     res.json({
         win,
         payout,
         reels,
+        winningMatrix,
     });
 };
 

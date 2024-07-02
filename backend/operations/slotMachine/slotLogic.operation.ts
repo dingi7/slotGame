@@ -1,8 +1,11 @@
-import { payouts, GameSymbol, Reel, Slot, Slot3x3 } from './payouts.model';
+import { createLines, updateWinningMatrix } from '../../util/paylineHelpers';
+import { payouts, GameSymbol, Reel, Slot3x3 } from './payouts.model';
 
-const reel1: Reel = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-const reel2: Reel = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-const reel3: Reel = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const reelSymbols: Reel = ['1', '2', '3', '4', '5', '6', '7', '8'];
+
+const reel1: Reel = [...reelSymbols, ...reelSymbols, ...reelSymbols];
+const reel2: Reel = [...reelSymbols, ...reelSymbols, ...reelSymbols];
+const reel3: Reel = [...reelSymbols, ...reelSymbols, ...reelSymbols];
 
 const reels: Reel[] = [reel1, reel2, reel3];
 
@@ -13,34 +16,49 @@ function spinReel(reel: Reel): GameSymbol {
 
 function spin(): Slot3x3 {
     return {
-        reel1: [spinReel(reels[0]), spinReel(reels[1]), spinReel(reels[2])],
-        reel2: [spinReel(reels[0]), spinReel(reels[1]), spinReel(reels[2])],
-        reel3: [spinReel(reels[0]), spinReel(reels[1]), spinReel(reels[2])],
+        row1: [spinReel(reels[0]), spinReel(reels[1]), spinReel(reels[2])],
+        row2: [spinReel(reels[0]), spinReel(reels[1]), spinReel(reels[2])],
+        row3: [spinReel(reels[0]), spinReel(reels[1]), spinReel(reels[2])],
     };
 }
 
-function calculatePayout(result: Slot3x3, betAmount: number): number {
-    const combination = result.reel2.join(''); // calculate other possible wins
-    let payout = 0;
+function findHighestPayout(lines: string[], payouts: any): [number, number] {
+    let maxPayout = 0;
+    let winningLineIndex = -1;
 
-    if (combination === '777') {
-        payout = payouts['777'];
-    } else if (combination.includes('77')) {
-        payout = payouts['77'];
-    } else if (combination.includes('7')) {
-        payout = payouts['7'];
-    } else if (payouts[combination] !== undefined) {
-        payout = payouts[combination];
-    }
+    lines.forEach((combination, index) => {
+        if (payouts[combination] !== undefined) {
+            const currentPayout = payouts[combination];
+            if (currentPayout > maxPayout) {
+                maxPayout = currentPayout;
+                winningLineIndex = index;
+            }
+        }
+    });
 
-    return payout * betAmount; // Adjusting to get approximately 96% RTP
+    return [maxPayout, winningLineIndex];
 }
 
-export function play(betAmount: number): [boolean, number, Slot3x3] {
+function calculatePayout(
+    result: Slot3x3,
+    betAmount: number
+): [number, boolean[][]] {
+    const lines = createLines(result);
+    const [maxPayout, winningLineIndex] = findHighestPayout(lines, payouts);
+
+    const payout = maxPayout * betAmount; // Adjusting to get approximately 96% RTP
+    const winningMatrix = updateWinningMatrix(winningLineIndex);
+
+    return [payout, winningMatrix];
+}
+
+export function play(
+    betAmount: number
+): [boolean, number, Slot3x3, boolean[][]] {
     const result = spin();
-    const payout = calculatePayout(result, betAmount);
+    const [payout, winningMatrix] = calculatePayout(result, betAmount); // use the winning matrix
     let win = payout > 0 ? true : false;
-    return [win, payout, result];
+    return [win, payout, result, winningMatrix];
 }
 
 export function doubleOrNothing(betAmount: number): [boolean, number] {

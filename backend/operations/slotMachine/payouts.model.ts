@@ -2,38 +2,23 @@ type Payouts = {
     [key: string]: number;
 };
 
-export type GameSymbol =
-    | '0'
-    | '1'
-    | '2'
-    | '3'
-    | '4'
-    | '5'
-    | '6'
-    | '7'
-    | '8'
-    | '9';
+export type GameSymbol = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8';
+
 export type Reel = GameSymbol[];
 
-export type Slot = [GameSymbol, GameSymbol, GameSymbol];
-
 export type Slot3x3 = {
-    reel1: [GameSymbol, GameSymbol, GameSymbol];
-    reel2: [GameSymbol, GameSymbol, GameSymbol];
-    reel3: [GameSymbol, GameSymbol, GameSymbol];
+    row1: [GameSymbol, GameSymbol, GameSymbol];
+    row2: [GameSymbol, GameSymbol, GameSymbol];
+    row3: [GameSymbol, GameSymbol, GameSymbol];
 };
 
 export const payouts: Payouts = {
-    '000': 1,
-    '111': 1,
-    '222': 1,
-    '333': 1,
-    '444': 1,
-    '555': 1,
-    '666': 1,
-    '777': 50,
-    '888': 1,
-    '999': 1,
-    '77': 2,
-    '7': 0,
+    '111': 3,
+    '222': 2,
+    '333': 5,
+    '444': 4,
+    '555': 5,
+    '666': 6,
+    '777': 30,
+    '888': 8,
 };
