@@ -2,13 +2,13 @@ import * as PIXI from 'pixi.js';
 
 import { Graphics, Stage } from '@pixi/react';
 
-import { ColumnStateType } from '../types/slotMachineTypes';
+import { ReelStateType } from '../types/slotMachineTypes';
 import React from 'react';
 import { SlotReel } from './SlotReel';
 import { drawLine, drawWinningLines } from '../utils/drawUtils';
 
 interface SlotMachineCanvasProps {
-  columnStates: ColumnStateType[];
+  columnStates: ReelStateType[];
   positions: number[];
   showLine: boolean;
   windowWidth: number;
@@ -33,7 +33,7 @@ export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
       <Stage
         options={{ backgroundAlpha: 0 }}
         width={windowWidth * 0.391 * (isMobile ? 2 : 1)}
-        height={totalHeight}
+      height={totalHeight + slotHeight}
       >
         {columnStates.map((column, colIndex) => (
           <SlotReel

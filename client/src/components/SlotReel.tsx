@@ -33,7 +33,7 @@ export const SlotReel: React.FC<SlotColumnProps> = ({
         0.14 *
         (isMobile ? 2 : 1)
       }
-      y={-slotHeight}
+      //y={-slotHeight}
       key={colIndex}
     >
       {/* <Graphics
