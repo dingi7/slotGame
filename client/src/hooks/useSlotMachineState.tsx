@@ -5,7 +5,7 @@ import { playSound, stopSound } from "../utils/soundPlayer";
 import { useEffect, useState } from "react";
 
 import { assets } from "../assets/reelAssets";
-import { initializeAssetsMatrix } from "../utils/slotMachineUtils";
+import { SetDelay, initializeAssetsMatrix } from "../utils/slotMachineUtils";
 import { sendSpinRequest } from "../api/requests";
 import spinningSound from "../assets/spinning.wav";
 import winSound from "../assets/win.wav";
@@ -117,6 +117,7 @@ export const useSlotMachineState = () => {
 
   const handleSpinRequest = async () => {
     const result = await sendSpinRequest(betAmount);
+    console.log("🚀 ~ handleSpinRequest ~ result:", result)
     setBalance((prevBalance) => prevBalance - betAmount);
     setDesiredNums(
       Object.values(result.reels).map((reel) => reel.map((num) => Number(num)))
@@ -134,7 +135,7 @@ export const useSlotMachineState = () => {
   };
 
   const startSpinning = async () => {
-    setHasWon(false)
+    setHasWon(false);
     setColumnStates(initializeAssetsMatrix);
     setHasHandledWin(true);
     closeModal();
@@ -178,27 +179,34 @@ export const useSlotMachineState = () => {
         setIsButtonDisabled(true);
         setHasHandledWin(false);
         playSound(winSound);
-        setTimeout(() => {
+
+        const toggleShowLine = () => {
           setShowLine(true);
           const lineIntervalId = setInterval(() => {
             setShowLine((prevShowLine) => !prevShowLine);
           }, 500);
-          setTimeout(() => {
+
+          SetDelay(3000).then(() => {
             clearInterval(lineIntervalId);
             setShowLine(false);
-          }, 3000);
-        }, 4000);
+          });
+        };
 
-        setTimeout(() => {
+        const executeWithDelays = async () => {
+          await SetDelay(4000);
+          toggleShowLine();
+
+          await SetDelay(spinIntervalDuration);
           openModal("win");
-        }, spinIntervalDuration);
 
-        setTimeout(() => {
+          await SetDelay(btnDissableDuration);
           setIsButtonDisabled(false);
-        }, btnDissableDuration);
+        };
+
+        executeWithDelays();
       }
     }
-  }, [columnStates]);
+  }, [columnStates, hasWon, spinIntervalDuration]);
 
   useEffect(() => {
     if (spinningReels.some((spinning) => spinning)) {
