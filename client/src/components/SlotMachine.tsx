@@ -30,6 +30,9 @@ export const SlotMachine: React.FC = () => {
     hasHandledWin,
     payoutsHandler,
     tempWinning,
+    setBalance,
+    isDoubleWinModalOpenable,
+    setIsDoubleWinModalOpenable
   } = useSlotMachineState();
 
   return (
@@ -91,6 +94,8 @@ export const SlotMachine: React.FC = () => {
         )}
       </div>
       <SlotMachineFooter
+        isDoubleWinModalOpenable={isDoubleWinModalOpenable}
+        setIsDoubleWinModalOpenable={setIsDoubleWinModalOpenable}
         isMobile={isMobile}
         balance={balance}
         lastWin={lastWin}
@@ -106,6 +111,7 @@ export const SlotMachine: React.FC = () => {
         openOptionsModal={() => openModal("optionsModal")}
         closeOptionsModal={() => closeModal("optionsModal")}
         isOptionsModalOpen={isModalOpen.optionsModal}
+        setBalance={setBalance}
       />
     </div>
   );

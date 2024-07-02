@@ -1,11 +1,9 @@
-import './App.css'
+import "./App.css";
 
-import { SlotMachine } from './components/SlotMachine'
+import { SlotMachine } from "./components/SlotMachine";
 
 function App() {
-  return (
-       <SlotMachine /> 
-  )
+  return <SlotMachine />;
 }
 
-export default App
+export default App;

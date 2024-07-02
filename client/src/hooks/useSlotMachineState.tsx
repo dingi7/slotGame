@@ -25,6 +25,7 @@ export const useSlotMachineState = () => {
   const totalHeight = slotHeight * 3;
   const [spinIntervalDuration] = useState(60);
   const [hasHandledWin, setHasHandledWin] = useState<boolean>(true);
+  const [isDoubleWinModalOpenable, setIsDoubleWinModalOpenable] = useState<boolean>(false);
 
   const betOptions: { [key: number]: number[] } = {
     // Adjust the bet options here
@@ -125,6 +126,7 @@ export const useSlotMachineState = () => {
     if (result.win) {
       setHasWon(true);
       setTempWinning(result.payout);
+      setIsDoubleWinModalOpenable(true);
     }
     return result;
   };
@@ -169,44 +171,47 @@ export const useSlotMachineState = () => {
   };
 
   useEffect(() => {
-    const allStopped = columnStates.every(
-      (column) => column.spinning === false
-    );
+    const allStopped = columnStates.every((column) => column.spinning === false);
     if (allStopped) {
       stopSound();
-
+  
       if (hasWon) {
         setIsButtonDisabled(true);
         setHasHandledWin(false);
         playSound(winSound);
-
+  
         const toggleShowLine = () => {
           setShowLine(true);
           const lineIntervalId = setInterval(() => {
             setShowLine((prevShowLine) => !prevShowLine);
           }, 500);
-
+  
           SetDelay(3000).then(() => {
             clearInterval(lineIntervalId);
             setShowLine(false);
           });
         };
-
+  
         const executeWithDelays = async () => {
-          await SetDelay(4000);
+          await SetDelay(3000);
           toggleShowLine();
-
+  
+          payoutsHandler(tempWinning);
+  
           await SetDelay(spinIntervalDuration);
           openModal("win");
-
+  
           await SetDelay(btnDissableDuration);
           setIsButtonDisabled(false);
+  
+          closeModal("win");
         };
-
+  
         executeWithDelays();
       }
     }
   }, [columnStates, hasWon, spinIntervalDuration]);
+  
 
   useEffect(() => {
     if (spinningReels.some((spinning) => spinning)) {
@@ -342,5 +347,8 @@ export const useSlotMachineState = () => {
     hasHandledWin,
     payoutsHandler,
     tempWinning,
+    setBalance,
+    isDoubleWinModalOpenable,
+    setIsDoubleWinModalOpenable
   };
 };
