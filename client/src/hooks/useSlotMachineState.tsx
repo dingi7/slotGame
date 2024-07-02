@@ -27,6 +27,8 @@ export const useSlotMachineState = () => {
   const [hasHandledWin, setHasHandledWin] = useState<boolean>(true);
   const [isDoubleWinModalOpenable, setIsDoubleWinModalOpenable] = useState<boolean>(false);
 
+  const [winningMatrix, setWinningMatrix] = useState<boolean[][]>([])
+
   const betOptions: { [key: number]: number[] } = {
     // Adjust the bet options here
     1: [1, 2, 3, 4, 5],
@@ -118,12 +120,13 @@ export const useSlotMachineState = () => {
 
   const handleSpinRequest = async () => {
     const result = await sendSpinRequest(betAmount);
-    console.log("🚀 ~ handleSpinRequest ~ result:", result)
+    console.log(result);
     setBalance((prevBalance) => prevBalance - betAmount);
     setDesiredNums(
       Object.values(result.reels).map((reel) => reel.map((num) => Number(num)))
     );
     if (result.win) {
+      setWinningMatrix(result.winningMatrix);
       setHasWon(true);
       setTempWinning(result.payout);
       setIsDoubleWinModalOpenable(true);
@@ -349,6 +352,7 @@ export const useSlotMachineState = () => {
     tempWinning,
     setBalance,
     isDoubleWinModalOpenable,
-    setIsDoubleWinModalOpenable
+    setIsDoubleWinModalOpenable,
+    winningMatrix
   };
 };
