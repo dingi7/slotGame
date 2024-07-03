@@ -141,7 +141,20 @@ export const useSlotMachineState = () => {
 
   const startSpinning = async () => {
     setHasWon(false);
-    setColumnStates(initializeAssetsMatrix);
+    setColumnStates((prevState: Reels) => [
+      {
+        ...prevState[0],
+        assets: prevState[0].assets.slice(-9),
+      },
+      {
+        ...prevState[1],
+        assets: prevState[1].assets.slice(-9),
+      },
+      {
+        ...prevState[2],
+        assets: prevState[2].assets.slice(-9),
+      },
+    ]);
     setHasHandledWin(true);
     closeModal();
     if (balance - betAmount < 0) {
