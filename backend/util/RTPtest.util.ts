@@ -19,4 +19,5 @@ export function RTPtest() {
     console.log(`RTP: ${RTP.toFixed(2)}%`);
     console.log(`Total Wins: ${totalWins} out of ${totalSpins} spins`);
     console.log(`Win Percentage: ${winPercentage.toFixed(2)}%`);
+    console.log(`Total Payout: ${totalPayout.toFixed(2)} BGN`);
 }

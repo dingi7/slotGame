@@ -52,13 +52,13 @@ export const useSlotMachineState = () => {
     const [positions, setPositions] = useState(Array(columnsCount).fill(0));
     const [showLine, setShowLine] = useState(false);
 
-  const [balance, setBalance] = useState(5000);
-  const [lastWin, setLastWin] = useState(0);
-  const [desiredNums, setDesiredNums] = useState<number[][]>();
-  const [tempWinning, setTempWinning] = useState<number>(0);
-  const [hasWon, setHasWon] = useState<boolean>(false);
+    const [balance, setBalance] = useState(5000);
+    const [lastWin, setLastWin] = useState(0);
+    const [desiredNums, setDesiredNums] = useState<number[][]>();
+    const [tempWinning, setTempWinning] = useState<number>(0);
+    const [hasWon, setHasWon] = useState<boolean>(false);
 
-  const [winningMatrix, setWinningMatrix] = useState<boolean[][]>([])
+    const [winningMatrix, setWinningMatrix] = useState<boolean[][]>([]);
 
     useEffect(() => {
         if (!desiredNums) {
@@ -125,17 +125,18 @@ export const useSlotMachineState = () => {
     const handleSpinRequest = async () => {
         const result = await sendSpinRequest(betAmount);
         console.log(result);
-    setBalance((prevBalance) => prevBalance - betAmount + result.payout);
+        setBalance((prevBalance) => prevBalance - betAmount + result.payout);
         setDesiredNums(
             Object.values(result.reels).map((reel) =>
                 reel.map((num) => Number(num))
             )
         );
         if (result.win) {
+            setLastWin(result.payout);
             setHasWon(true);
             setTempWinning(result.payout);
-          setWinningMatrix(result.winningMatrix)
-    }
+            setWinningMatrix(result.winningMatrix);
+        }
         return result;
     };
 
@@ -145,7 +146,7 @@ export const useSlotMachineState = () => {
     };
 
     const startSpinning = async () => {
-        setHasWon(false);;
+        setHasWon(false);
         setColumnStates(initializeAssetsMatrix);
         setHasHandledWin(true);
         closeModal();
@@ -245,17 +246,13 @@ export const useSlotMachineState = () => {
                                                 minIconsMoved)
                                 ) {
                                     if (
-                                        
-                  newAssets[1].value ===
+                                        newAssets[1].value ===
                                             desiredNums![0][reelIndex] &&
-                                       
-                  newAssets[2].value ===
+                                        newAssets[2].value ===
                                             desiredNums![1][reelIndex] &&
-                                       
-                  newAssets[3].value ===
+                                        newAssets[3].value ===
                                             desiredNums![2][reelIndex]
-                                    
-                ) {
+                                    ) {
                                         setSpinningColumns((prev) => {
                                             const newSpinningColumns = [
                                                 ...prev,
@@ -346,29 +343,29 @@ export const useSlotMachineState = () => {
         }));
     };
 
-  return {
-    isMobile,
-    windowWidth,
-    slotHeight,
-    totalHeight,
-    columnStates,
-    spinningReels,
-    positions,
-    showLine,
-    lastWin,
-    isModalOpen,
-    betAmount,
-    fixedBetAmounts,
-    setBetAmount,
-    startSpinning,
-    balance,
-    isButtonDisabled,
-    handleBetAmountChange,
-    openModal,
-    closeModal,
-    hasHandledWin,
-    payoutsHandler,
-    tempWinning,
-    winningMatrix
-  };
+    return {
+        isMobile,
+        windowWidth,
+        slotHeight,
+        totalHeight,
+        columnStates,
+        spinningReels,
+        positions,
+        showLine,
+        lastWin,
+        isModalOpen,
+        betAmount,
+        fixedBetAmounts,
+        setBetAmount,
+        startSpinning,
+        balance,
+        isButtonDisabled,
+        handleBetAmountChange,
+        openModal,
+        closeModal,
+        hasHandledWin,
+        payoutsHandler,
+        tempWinning,
+        winningMatrix,
+    };
 };
