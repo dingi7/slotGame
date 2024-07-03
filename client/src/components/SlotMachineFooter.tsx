@@ -17,7 +17,8 @@ export const SlotMachineFooter = ({
   openOptionsModal,
   hasHandledWin,
   closeOptionsModal,
-  isOptionsModalOpen
+  isOptionsModalOpen,
+  payoutsHandler,
 }: {
   isMobile: boolean;
   balance: number;
@@ -34,9 +35,8 @@ export const SlotMachineFooter = ({
   openOptionsModal: () => void;
   closeOptionsModal: () => void;
   isOptionsModalOpen: boolean;
+  payoutsHandler: (amount: number) => void;
 }) => {
-
-
   return (
     <div
       className={` select-none relative h-[15%] bg-gradient-to-t w-full from-black via-black/50 to-transparent`}
@@ -89,36 +89,43 @@ export const SlotMachineFooter = ({
           handleBetAmountChange={handleBetAmountChange}
         />
 
-        {isMobile && (
-          <button
-            className=" bg-stone-900/50 p-[2.5%]  h-full aspect-square flex justify-center items-center rounded-full border-2 border-slate-200 "
-            onClick={startSpinning}
-             disabled={
-                spinningColumns.some((x) => x === true) || isButtonDisabled
-              }
-          >
-            {hasHandledWin ? (
-              <RefreshCcw
-                className={`opacity-100 ${
-                  spinningColumns.some((x) => x === true) ? "animate-spin" : ""
-                }`}
-              />
-            ) : (
-              <ArrowDownFromLine />
-            )}
-          </button>
-        )}
-
-        {!isMobile && (
-          <div className="flex justify-between items-center h-full gap-[4%]">
+        {isMobile &&
+          (hasHandledWin ? (
             <button
-              className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square"
+              className=" bg-stone-900/50 p-[2.5%]  h-full aspect-square flex justify-center items-center rounded-full border-2 border-slate-200 "
               onClick={startSpinning}
               disabled={
                 spinningColumns.some((x) => x === true) || isButtonDisabled
               }
             >
-              {hasHandledWin ? (
+              <RefreshCcw
+                className={`opacity-100 ${
+                  spinningColumns.some((x) => x === true) ? "animate-spin" : ""
+                }`}
+              />
+            </button>
+          ) : (
+            <button
+              className=" bg-stone-900/50 p-[2.5%]  h-full aspect-square flex justify-center items-center rounded-full border-2 border-slate-200 "
+              onClick={() => payoutsHandler(betAmount)}
+              disabled={
+                spinningColumns.some((x) => x === true) || isButtonDisabled
+              }
+            >
+              <ArrowDownFromLine />
+            </button>
+          ))}
+
+        {!isMobile && (
+          <div className="flex justify-between items-center h-full gap-[4%]">
+            {hasHandledWin ? (
+              <button
+                className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square"
+                onClick={startSpinning}
+                disabled={
+                  spinningColumns.some((x) => x === true) || isButtonDisabled
+                }
+              >
                 <RefreshCcw
                   className={`opacity-100 ${
                     spinningColumns.some((x) => x === true)
@@ -126,10 +133,18 @@ export const SlotMachineFooter = ({
                       : ""
                   }`}
                 />
-              ) : (
+              </button>
+            ) : (
+              <button
+                className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square"
+                onClick={() => payoutsHandler(betAmount)}
+                disabled={
+                  spinningColumns.some((x) => x === true) || isButtonDisabled
+                }
+              >
                 <ArrowDownFromLine />
-              )}
-            </button>
+              </button>
+            )}
             {!hasHandledWin && (
               <button
                 className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-2/3 aspect-square"

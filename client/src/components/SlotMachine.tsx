@@ -108,6 +108,7 @@ export const SlotMachine: React.FC = () => {
         openOptionsModal={() => openModal("optionsModal")}
         closeOptionsModal={() => closeModal("optionsModal")}
         isOptionsModalOpen={isModalOpen.optionsModal}
+        payoutsHandler={payoutsHandler}
       />
     </div>
   );
