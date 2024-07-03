@@ -54,16 +54,30 @@ export const drawRectBorder = (
   graphics.endFill();
 };
 
-
+// Constants for line styles
 const LINE_WIDTH = 4;
 const LINE_COLOR = 0xff0000;
 const LINE_ALPHA = 1;
 
+// Function to draw a single horizontal line
 const drawHorizontalLine = (graphics: PIXI.Graphics, x1: number, y: number, x2: number) => {
   graphics.moveTo(x1, y);
   graphics.lineTo(x2, y);
 };
 
+// Function to draw a single vertical line
+const drawVerticalLine = (graphics: PIXI.Graphics, x: number, y1: number, y2: number) => {
+  graphics.moveTo(x, y1);
+  graphics.lineTo(x, y2);
+};
+
+// Function to draw a single diagonal line
+const drawDiagonalLine = (graphics: PIXI.Graphics, x1: number, y1: number, x2: number, y2: number) => {
+  graphics.moveTo(x1, y1);
+  graphics.lineTo(x2, y2);
+};
+
+// Main function to draw winning lines based on winningMatrix
 export const drawWinningLines = (
   graphics: PIXI.Graphics,
   slotHeight: number,
@@ -75,28 +89,63 @@ export const drawWinningLines = (
   graphics.clear();
   graphics.lineStyle(LINE_WIDTH, LINE_COLOR, LINE_ALPHA);
 
-  const firstColX2 = windowWidth / 3.475;
-  const secondColX1 = windowWidth / 2.82;
-  const secondColX2 = (windowWidth / 3.115) * 2;
-  const thirdColX1 = windowWidth / 0.6;
-  const thirdColX2 = (windowWidth / 2.805) * 2;
+  const columnWidth = windowWidth / 3;
+  const firstColX2 = columnWidth;
+  const secondColX1 = columnWidth;
+  const secondColX2 = columnWidth * 2;
+  const thirdColX1 = columnWidth * 2;
+  const thirdColX2 = windowWidth;
+
+  // Check for diagonal wins
+  const checkDiagonalWin = (matrix: boolean[][]): boolean[] => {
+    const diagonal1 = matrix[0][0] && matrix[1][1] && matrix[2][2];
+    const diagonal2 = matrix[0][2] && matrix[1][1] && matrix[2][0];
+    return [diagonal1, diagonal2];
+  };
+
+  const [diagonal1, diagonal2] = checkDiagonalWin(winningMatrix);
+
+  // Draw diagonal lines if present
+  if (diagonal1) {
+    return drawDiagonalLine(graphics, 0, 0, windowWidth, slotHeight * 3);
+  }
+
+  if (diagonal2) {
+    return drawDiagonalLine(graphics, 0, slotHeight * 3, windowWidth, 0);
+  }
+
+  // Check for vertical wins
+  const checkVerticalWin = (matrix: boolean[][]): boolean[] => {
+    return matrix[0].map((_, colIndex) => matrix[0][colIndex] && matrix[1][colIndex] && matrix[2][colIndex]);
+  };
+
+  const verticalWins = checkVerticalWin(winningMatrix);
 
   // Draw lines based on the winningMatrix
   for (let row = 0; row < 3; row++) {
     for (let col = 0; col < 3; col++) {
+      const y = slotHeight * (row + 0.5);
+      const x = columnWidth * (col + 0.5);
+
       if (winningMatrix[row][col]) {
-        const y = slotHeight * (row + 0.5);
-        
-        switch (col) {
-          case 0:
-            drawHorizontalLine(graphics, 0, y, firstColX2);
-            break;
-          case 1:
-            drawHorizontalLine(graphics, secondColX1, y, secondColX2);
-            break;
-          case 2:
-            drawHorizontalLine(graphics, thirdColX1, y, thirdColX2);
-            break;
+        if (verticalWins[col]) {
+          return drawVerticalLine(graphics, x, 0, slotHeight * 3);
+        } else {
+          switch (col) {
+            case 0:
+              if (!diagonal1 && !diagonal2) {
+                drawHorizontalLine(graphics, 0, y, firstColX2);
+              }
+              break;
+            case 1:
+              drawHorizontalLine(graphics, secondColX1, y, secondColX2);
+              break;
+            case 2:
+              if (!diagonal1 && !diagonal2) {
+                drawHorizontalLine(graphics, thirdColX1, y, thirdColX2);
+              }
+              break;
+          }
         }
       }
     }
