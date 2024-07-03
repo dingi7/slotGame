@@ -40,7 +40,7 @@ export const SlotMachine: React.FC = () => {
       } text-white overflow-hidden`}
       style={{ backgroundImage: `url(${slotBackground})` }}
     >
-      {isModalOpen.win && lastWin && <WinningModal winAmmount={lastWin} />}
+      {isModalOpen.win && lastWin && <WinningModal winAmmount={tempWinning} />}
       {isModalOpen.insufficientFunds && <InsufficientFundsModal />}
       {/* {isModalOpen.doubleWinAmountModal && <DoubleWinAmountModal cards={[redCard, blackCard]} betAmmount={betAmount}/>} */}
       {isModalOpen.doubleWinAmountModal && (
@@ -109,6 +109,7 @@ export const SlotMachine: React.FC = () => {
         closeOptionsModal={() => closeModal("optionsModal")}
         isOptionsModalOpen={isModalOpen.optionsModal}
         payoutsHandler={payoutsHandler}
+        tempWinning={tempWinning}
       />
     </div>
   );

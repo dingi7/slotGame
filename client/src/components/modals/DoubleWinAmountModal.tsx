@@ -40,7 +40,7 @@ export const DoubleWinAmountModal = ({
     }, [cardBacks, hasHandled]);
 
     const handleSubmit = async (clickedChoice: number) => {
-        const result = await sendDoubleRequest(10);
+        const result = await sendDoubleRequest(betAmmount);
         if (result.result) {
             setSelectedCard(cardFronts[clickedChoice]);
             setHasWon(true);

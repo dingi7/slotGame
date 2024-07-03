@@ -19,6 +19,7 @@ export const SlotMachineFooter = ({
   closeOptionsModal,
   isOptionsModalOpen,
   payoutsHandler,
+  tempWinning
 }: {
   isMobile: boolean;
   balance: number;
@@ -36,6 +37,7 @@ export const SlotMachineFooter = ({
   closeOptionsModal: () => void;
   isOptionsModalOpen: boolean;
   payoutsHandler: (amount: number) => void;
+  tempWinning: number
 }) => {
   return (
     <div
@@ -107,7 +109,7 @@ export const SlotMachineFooter = ({
           ) : (
             <button
               className=" bg-stone-900/50 p-[2.5%]  h-full aspect-square flex justify-center items-center rounded-full border-2 border-slate-200 "
-              onClick={() => payoutsHandler(betAmount)}
+              onClick={() => payoutsHandler(tempWinning)}
               disabled={
                 spinningColumns.some((x) => x === true) || isButtonDisabled
               }
@@ -137,7 +139,7 @@ export const SlotMachineFooter = ({
             ) : (
               <button
                 className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square"
-                onClick={() => payoutsHandler(betAmount)}
+                onClick={() => payoutsHandler(tempWinning)}
                 disabled={
                   spinningColumns.some((x) => x === true) || isButtonDisabled
                 }

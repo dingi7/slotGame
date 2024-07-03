@@ -136,7 +136,6 @@ export const useSlotMachineState = () => {
   const payoutsHandler = (amount: number) => {
     setBalance((prevBalance) => prevBalance + amount);
     setLastWin(amount);
-    setHasWon(false);
     setHasHandledWin(true);
   };
 
