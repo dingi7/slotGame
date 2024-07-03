@@ -30,6 +30,7 @@ export const SlotMachine: React.FC = () => {
     hasHandledWin,
     payoutsHandler,
     tempWinning,
+    winningMatrix
   } = useSlotMachineState();
 
   return (
@@ -61,6 +62,7 @@ export const SlotMachine: React.FC = () => {
           isMobile={isMobile}
           slotHeight={slotHeight}
           totalHeight={totalHeight}
+          winningMatrix={winningMatrix}
         />
 
         {isMobile && (

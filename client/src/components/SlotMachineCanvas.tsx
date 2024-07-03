@@ -5,7 +5,7 @@ import { Graphics, Stage } from '@pixi/react';
 import { ColumnStateType } from '../types/slotMachineTypes';
 import React from 'react';
 import { SlotReel } from './SlotReel';
-import { drawLine } from '../utils/drawUtils';
+import { drawWinningLines } from '../utils/drawUtils';
 
 interface SlotMachineCanvasProps {
   columnStates: ColumnStateType[];
@@ -15,6 +15,7 @@ interface SlotMachineCanvasProps {
   isMobile: boolean;
   slotHeight: number;
   totalHeight: number;
+  winningMatrix: boolean[][];
 }
 
 export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
@@ -25,6 +26,7 @@ export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
   isMobile,
   slotHeight,
   totalHeight,
+  winningMatrix
 }) => {
   return (
     <div className="my-auto relative">
@@ -45,7 +47,7 @@ export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
             totalHeight={totalHeight}
           />
         ))}
-        {showLine && <Graphics draw={(g: PIXI.Graphics) => drawLine(g, slotHeight, windowWidth, isMobile)} />}
+        {showLine && <Graphics draw={(g: PIXI.Graphics) => drawWinningLines(g, slotHeight, windowWidth * 0.391, isMobile, winningMatrix)} />}
       </Stage>
     </div>
   );
