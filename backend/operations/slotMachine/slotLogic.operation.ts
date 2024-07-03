@@ -46,7 +46,7 @@ function calculatePayout(
     const lines = createLines(result);
     const [maxPayout, winningLineIndex] = findHighestPayout(lines, payouts);
 
-    const payout = maxPayout * betAmount; // Adjusting to get approximately 96% RTP
+    const payout = maxPayout * betAmount;
     const winningMatrix = updateWinningMatrix(winningLineIndex);
 
     return [payout, winningMatrix];
@@ -56,7 +56,7 @@ export function play(
     betAmount: number
 ): [boolean, number, Slot3x3, boolean[][]] {
     const result = spin();
-    const [payout, winningMatrix] = calculatePayout(result, betAmount); // use the winning matrix
+    const [payout, winningMatrix] = calculatePayout(result, betAmount); 
     let win = payout > 0 ? true : false;
     return [win, payout, result, winningMatrix];
 }
