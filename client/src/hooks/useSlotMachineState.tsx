@@ -4,12 +4,12 @@ import { Asset, ReelStateType, Reels } from "../types/slotMachineTypes";
 import { playSound, stopSound } from "../utils/soundPlayer";
 import { useEffect, useState } from "react";
 
+import { ModalState } from "./useModal";
 import { assets } from "../assets/reelAssets";
 import { initializeAssetsMatrix } from "../utils/slotMachineUtils";
 import { sendSpinRequest } from "../api/requests";
 import spinningSound from "../assets/spinning.wav";
 import winSound from "../assets/win.wav";
-import { ModalState } from "./useModal";
 
 type ReelIndex = 0 | 1 | 2;
 
@@ -23,7 +23,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
   const columnsCount = 3;
   const rowsCount = 3;
   const frameRate = 10;
-  const btnDissableDuration = 3000; // 3 sec
+  const btnDissableDuration = 1000; // 3 sec
   const minSpinTimes = 10;
   const minIconsToBeMoved = 3;
   const isMobile = windowWidth <= 768;
@@ -140,6 +140,13 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
 
   const startSpinning = async () => {
     setHasWon(false);
+    setHasHandledWin(true);
+    closeModal();
+    if (balance - betAmount < 0) {
+      openModal("insufficientFunds");
+      return;
+    }
+    stopSound();
     setColumnStates((prevState: Reels) => [
       {
         ...prevState[0],
@@ -154,13 +161,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
         assets: prevState[2].assets.slice(-9),
       },
     ]);
-    setHasHandledWin(true);
-    closeModal();
-    if (balance - betAmount < 0) {
-      openModal("insufficientFunds");
-      return;
-    }
-    stopSound();
+
     playSound(spinningSound);
     setColumnStates(
       (prevStates) =>
@@ -185,38 +186,69 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
     setPositions(Array(columnsCount).fill(0));
   };
 
+  const toggleLine = () => {
+    setShowLine(true);
+
+    const intervalDuration = 500;
+    const totalDuration = 3000;
+    const toggleIntervalId = setInterval(() => {
+      setShowLine((prevShowLine) => !prevShowLine);
+    }, intervalDuration);
+
+    setTimeout(() => {
+      clearInterval(toggleIntervalId);
+      setShowLine(false);
+    }, totalDuration);
+  };
+
+  //   useEffect(() => {
+  //     const allStopped = columnStates.every(
+  //       (column) => column.spinning === false
+  //     );
+  //     if (allStopped) {
+  //       stopSound();
+  //     }
+  //     if (allStopped && hasWon) {
+  //       setIsButtonDisabled(true);
+  //       setHasHandledWin(false);
+  //       playSound(winSound);
+
+  //       setTimeout(toggleLine, 3000);
+
+  //       setTimeout(() => {
+  //         openModal("win");
+  //       }, spinIntervalDuration);
+
+  //       setTimeout(() => {
+  //         setIsButtonDisabled(false);
+  //       }, btnDissableDuration);
+  //     }
+  //   }, [columnStates, hasWon]);
+
   useEffect(() => {
     const allStopped = columnStates.every(
       (column) => column.spinning === false
     );
     if (allStopped) {
       stopSound();
-
-      if (hasWon) {
-        setIsButtonDisabled(true);
-        setHasHandledWin(false);
-        playSound(winSound);
-        setTimeout(() => {
-          setShowLine(true);
-          const lineIntervalId = setInterval(() => {
-            setShowLine((prevShowLine) => !prevShowLine);
-          }, 500);
-          setTimeout(() => {
-            clearInterval(lineIntervalId);
-            setShowLine(false);
-          }, 3000);
-        }, 4000);
-
-        setTimeout(() => {
-          openModal("win");
-        }, spinIntervalDuration);
-
-        setTimeout(() => {
-          setIsButtonDisabled(false);
-        }, btnDissableDuration);
-      }
     }
-  }, [columnStates]);
+    if (allStopped && hasWon) {
+      setIsButtonDisabled(true);
+      setHasHandledWin(false);
+      playSound(winSound);
+
+      // Immediately show the line without waiting
+      toggleLine();
+
+      setTimeout(() => {
+        openModal("win");
+      }, spinIntervalDuration);
+
+      setTimeout(() => {
+        setIsButtonDisabled(false);
+      }, btnDissableDuration);
+    }
+  }, [columnStates, hasWon]);
 
   useEffect(() => {
     if (spinningReels.some((spinning) => spinning)) {
@@ -243,7 +275,8 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
               const isFirstReel = reelIndex === 0;
 
               if (
-                (isFirstReel && reelIconsMoved[reelIndex] >= minIconsToBeMoved) ||
+                (isFirstReel &&
+                  reelIconsMoved[reelIndex] >= minIconsToBeMoved) ||
                 (previousReelStopped &&
                   reelIconsMoved[reelIndex] >=
                     reelIconsMoved[reelIndex - 1] + minIconsToBeMoved)
