@@ -9,17 +9,23 @@ import { initializeAssetsMatrix } from "../utils/slotMachineUtils";
 import { sendSpinRequest } from "../api/requests";
 import spinningSound from "../assets/spinning.wav";
 import winSound from "../assets/win.wav";
+import { ModalState } from "./useModal";
 
 type ReelIndex = 0 | 1 | 2;
 
-export const useSlotMachineState = () => {
+interface SlotMachineProps {
+  openModal: (modal: ModalState) => void;
+  closeModal: (modal?: ModalState) => void;
+}
+
+export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
   const windowWidth = window.innerWidth;
   const columnsCount = 3;
   const rowsCount = 3;
   const frameRate = 10;
   const btnDissableDuration = 3000; // 3 sec
   const minSpinTimes = 10;
-  const minIconsMoved = 3;
+  const minIconsToBeMoved = 3;
   const isMobile = windowWidth <= 768;
   const slotHeight = windowWidth * 0.1 * (isMobile ? 2 : 1);
   const totalHeight = slotHeight * 3;
@@ -107,13 +113,6 @@ export const useSlotMachineState = () => {
   }, [desiredNums]);
 
   //ensure that desired numbers match reels state
-
-  const [isModalOpen, setIsModalOpen] = useState({
-    win: false,
-    insufficientFunds: false,
-    doubleWinAmountModal: false,
-    optionsModal: false,
-  });
 
   const [reelIconsMoved, setReelIcons] = useState(Array(columnsCount).fill(0));
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -244,10 +243,10 @@ export const useSlotMachineState = () => {
               const isFirstReel = reelIndex === 0;
 
               if (
-                isFirstReel ||
+                (isFirstReel && reelIconsMoved[reelIndex] >= minIconsToBeMoved) ||
                 (previousReelStopped &&
                   reelIconsMoved[reelIndex] >=
-                    reelIconsMoved[reelIndex - 1] + minIconsMoved)
+                    reelIconsMoved[reelIndex - 1] + minIconsToBeMoved)
               ) {
                 if (
                   newAssets[1].value === desiredNums![0][reelIndex] &&
@@ -302,39 +301,6 @@ export const useSlotMachineState = () => {
       .start();
   };
 
-  const openModal = (
-    modal: "win" | "insufficientFunds" | "doubleWinAmountModal" | "optionsModal"
-  ) => {
-    setIsModalOpen((prevState) => ({
-      ...prevState,
-      [modal]: true,
-    }));
-  };
-
-  const closeModal = (
-    modal?:
-      | "win"
-      | "insufficientFunds"
-      | "doubleWinAmountModal"
-      | "optionsModal"
-  ) => {
-    if (!modal) {
-      // Close all modals
-      setIsModalOpen({
-        win: false,
-        insufficientFunds: false,
-        doubleWinAmountModal: false,
-        optionsModal: false,
-      });
-      return;
-    }
-
-    setIsModalOpen((prevState) => ({
-      ...prevState,
-      [modal]: false,
-    }));
-  };
-
   return {
     isMobile,
     windowWidth,
@@ -345,7 +311,6 @@ export const useSlotMachineState = () => {
     positions,
     showLine,
     lastWin,
-    isModalOpen,
     betAmount,
     fixedBetAmounts,
     setBetAmount,

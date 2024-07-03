@@ -4,9 +4,11 @@ import { SlotMachineCanvas } from "./SlotMachineCanvas";
 import { SlotMachineFooter } from "./SlotMachineFooter";
 import { WinningModal } from "./modals/WinningModal";
 import slotBackground from "../assets/background.png";
-import { useSlotMachineState } from "../hooks/useSlotMachineState";
+import { useSlotMachine } from "../hooks/useSlotMachineState";
+import useModal from "../hooks/useModal";
 
 export const SlotMachine: React.FC = () => {
+  const { isModalOpen, closeModal, openModal } = useModal();
   const {
     isMobile,
     windowWidth,
@@ -17,7 +19,6 @@ export const SlotMachine: React.FC = () => {
     positions,
     showLine,
     lastWin,
-    isModalOpen,
     betAmount,
     fixedBetAmounts,
     setBetAmount,
@@ -25,13 +26,11 @@ export const SlotMachine: React.FC = () => {
     balance,
     isButtonDisabled,
     handleBetAmountChange,
-    openModal,
-    closeModal,
     hasHandledWin,
     payoutsHandler,
     tempWinning,
-    winningMatrix
-  } = useSlotMachineState();
+    winningMatrix,
+  } = useSlotMachine({ closeModal, openModal });
 
   return (
     <div
@@ -40,11 +39,14 @@ export const SlotMachine: React.FC = () => {
       } text-white overflow-hidden`}
       style={{ backgroundImage: `url(${slotBackground})` }}
     >
-      {isModalOpen.win && lastWin && <WinningModal winAmmount={tempWinning} />}
       {isModalOpen.insufficientFunds && <InsufficientFundsModal />}
       {/* {isModalOpen.doubleWinAmountModal && <DoubleWinAmountModal cards={[redCard, blackCard]} betAmmount={betAmount}/>} */}
       {isModalOpen.doubleWinAmountModal && (
-        <DoubleWinAmountModal betAmmount={tempWinning} payoutsHandler={payoutsHandler} closeModal={() => closeModal("doubleWinAmountModal")}/>
+        <DoubleWinAmountModal
+          betAmmount={tempWinning}
+          payoutsHandler={payoutsHandler}
+          closeModal={() => closeModal("doubleWinAmountModal")}
+        />
       )}
 
       <div className="w-full h-full flex flex-col justify-center items-center">
