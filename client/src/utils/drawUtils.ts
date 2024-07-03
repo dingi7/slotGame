@@ -54,7 +54,6 @@ export const drawRectBorder = (
   graphics.endFill();
 };
 
-// Constants for line styles
 const LINE_WIDTH = 4;
 const LINE_COLOR = 0xff0000;
 const LINE_ALPHA = 1;
@@ -77,7 +76,6 @@ const drawDiagonalLine = (graphics: PIXI.Graphics, x1: number, y1: number, x2: n
   graphics.lineTo(x2, y2);
 };
 
-// Main function to draw winning lines based on winningMatrix
 export const drawWinningLines = (
   graphics: PIXI.Graphics,
   slotHeight: number,
@@ -96,7 +94,6 @@ export const drawWinningLines = (
   const thirdColX1 = columnWidth * 2;
   const thirdColX2 = windowWidth;
 
-  // Check for diagonal wins
   const checkDiagonalWin = (matrix: boolean[][]): boolean[] => {
     const diagonal1 = matrix[0][0] && matrix[1][1] && matrix[2][2];
     const diagonal2 = matrix[0][2] && matrix[1][1] && matrix[2][0];
@@ -105,7 +102,6 @@ export const drawWinningLines = (
 
   const [diagonal1, diagonal2] = checkDiagonalWin(winningMatrix);
 
-  // Draw diagonal lines if present
   if (diagonal1) {
     return drawDiagonalLine(graphics, 0, 0, windowWidth, slotHeight * 3);
   }
@@ -114,7 +110,6 @@ export const drawWinningLines = (
     return drawDiagonalLine(graphics, 0, slotHeight * 3, windowWidth, 0);
   }
 
-  // Check for vertical wins
   const checkVerticalWin = (matrix: boolean[][]): boolean[] => {
     return matrix[0].map((_, colIndex) => matrix[0][colIndex] && matrix[1][colIndex] && matrix[2][colIndex]);
   };
