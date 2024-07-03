@@ -124,7 +124,8 @@ export const useSlotMachineState = () => {
 
     const handleSpinRequest = async () => {
         const result = await sendSpinRequest(betAmount);
-        setBalance((prevBalance) => prevBalance - betAmount + result.payout);
+        setBalance((prevBalance) => prevBalance - betAmount + result.payout); // change if using double or nothing
+        setLastWin(result.payout);
         setDesiredNums(
             Object.values(result.reels).map((reel) =>
                 reel.map((num) => Number(num))
