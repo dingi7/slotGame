@@ -1,4 +1,4 @@
-import { createLines, updateWinningMatrix } from '../../util/paylineHelpers';
+import { createLines, updateWinningMatrix } from '../../util/paylineHelpers.util';
 import { payouts, GameSymbol, Reel, Slot3x3 } from './payouts.model';
 
 const reelSymbols: Reel = ['1', '2', '3', '4', '5', '6', '7', '8'];

@@ -4,7 +4,7 @@ import slotRouter from "./routes/slot.route";
 import { createServer } from "http";
 import cors from "cors";
 import * as dotenv from "dotenv";
-import { RTPtest } from "./util/RTPtest";
+import { RTPtest } from "./util/RTPtest.util";
 
 dotenv.config();
 const app = express();
