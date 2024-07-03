@@ -17,13 +17,8 @@ export const SlotMachineFooter = ({
   openOptionsModal,
   hasHandledWin,
   closeOptionsModal,
-  isOptionsModalOpen,
-  setBalance,
-  isDoubleWinModalOpenable,
-  setIsDoubleWinModalOpenable,
+  isOptionsModalOpen
 }: {
-  isDoubleWinModalOpenable: boolean;
-  setIsDoubleWinModalOpenable: (x: boolean) => void;
   isMobile: boolean;
   balance: number;
   fixedBetAmounts: number[];
@@ -39,8 +34,9 @@ export const SlotMachineFooter = ({
   openOptionsModal: () => void;
   closeOptionsModal: () => void;
   isOptionsModalOpen: boolean;
-  setBalance: (x: number) => void;
 }) => {
+
+
   return (
     <div
       className={` select-none relative h-[15%] bg-gradient-to-t w-full from-black via-black/50 to-transparent`}
@@ -97,9 +93,9 @@ export const SlotMachineFooter = ({
           <button
             className=" bg-stone-900/50 p-[2.5%]  h-full aspect-square flex justify-center items-center rounded-full border-2 border-slate-200 "
             onClick={startSpinning}
-            disabled={
-              spinningColumns.some((x) => x === true) || isButtonDisabled
-            }
+             disabled={
+                spinningColumns.some((x) => x === true) || isButtonDisabled
+              }
           >
             {hasHandledWin ? (
               <RefreshCcw
@@ -137,13 +133,9 @@ export const SlotMachineFooter = ({
             {!hasHandledWin && (
               <button
                 className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-2/3 aspect-square"
-                onClick={() => {
-                  setBalance(balance - lastWin);
-                  openDoubleWinAmountModal();
-                  setIsDoubleWinModalOpenable(false);
-                }}
+                onClick={openDoubleWinAmountModal}
                 disabled={
-                  spinningColumns.some((x) => x === true) || isButtonDisabled || !isDoubleWinModalOpenable
+                  spinningColumns.some((x) => x === true) || isButtonDisabled
                 }
               >
                 <p className="flex items-baseline gap-[10%] font-semibold">

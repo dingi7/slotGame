@@ -22,7 +22,7 @@ export const DoubleWinAmountModal = ({
   const [selectedCard, setSelectedCard] = useState<string>(cardBacks[0]);
   const [hasHandled, setHasHandled] = useState<boolean>(false);
 
-  const [hasWon, setHasWon] = useState<boolean>(false);
+  const [hasWan, setHasWon] = useState<boolean>(false);
 
   const toggleCard = () => {
     setSelectedCard((prevCard) => {
@@ -39,12 +39,11 @@ export const DoubleWinAmountModal = ({
   }, [cardBacks, hasHandled]);
 
   const handleSubmit = async (clickedChoice: number) => {
-    const result = await sendDoubleRequest(betAmmount);
+    const result = await sendDoubleRequest(10);
     if (result.result) {
       setSelectedCard(cardFronts[clickedChoice]);
       setHasWon(true);
-      console.log(result.payout);
-      payoutsHandler(result.payout);
+      payoutsHandler(betAmmount);
     } else {
       const otherChoice = clickedChoice === 0 ? 1 : 0;
       setSelectedCard(cardFronts[otherChoice]);
@@ -93,7 +92,7 @@ export const DoubleWinAmountModal = ({
               className="w-2/3 aspect-square  object-contain m-auto"
             />
             {hasHandled &&
-              (hasWon ? (
+              (hasWan ? (
                 <img
                   src={winText}
                   alt="win text"
