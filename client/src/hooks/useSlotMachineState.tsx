@@ -234,7 +234,7 @@ export const useSlotMachineState = () => {
                   reelIconsMoved[reelIndex] >=
                     reelIconsMoved[reelIndex - 1] + minIconsMoved)
               ) {
-                if (newAssets[1].value === desiredNums![0][reelIndex]) {
+                if (newAssets[1].value === desiredNums![0][reelIndex] && newAssets[2].value === desiredNums![1][reelIndex] && newAssets[3].value === desiredNums![2][reelIndex]) {
                   setSpinningColumns((prev) => {
                     const newSpinningColumns = [...prev];
                     newSpinningColumns[reelIndex] = false;
