@@ -30,7 +30,7 @@ export const SlotMachine: React.FC = () => {
     payoutsHandler,
     tempWinning,
     winningMatrix,
-
+    isAutoSpinEnabled,
   } = useSlotMachine({ closeModal, openModal });
 
   return (
@@ -115,6 +115,7 @@ export const SlotMachine: React.FC = () => {
         isOptionsModalOpen={isModalOpen.optionsModal}
         payoutsHandler={payoutsHandler}
         tempWinning={tempWinning}
+        isAutoSpinEnabled={isAutoSpinEnabled}
       />
     </div>
   );

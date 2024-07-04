@@ -19,7 +19,8 @@ export const SlotMachineFooter = ({
   closeOptionsModal,
   isOptionsModalOpen,
   payoutsHandler,
-  tempWinning
+  tempWinning,
+  isAutoSpinEnabled
 }: {
   isMobile: boolean;
   balance: number;
@@ -37,7 +38,8 @@ export const SlotMachineFooter = ({
   closeOptionsModal: () => void;
   isOptionsModalOpen: boolean;
   payoutsHandler: (amount: number) => void;
-  tempWinning: number
+  tempWinning: number;
+  isAutoSpinEnabled: boolean;
 }) => {
   return (
     <div
@@ -147,7 +149,7 @@ export const SlotMachineFooter = ({
                 <ArrowDownFromLine />
               </button>
             )}
-            {!hasHandledWin && (
+            {!hasHandledWin && !isAutoSpinEnabled && (
               <button
                 className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-2/3 aspect-square"
                 onClick={openDoubleWinAmountModal}
