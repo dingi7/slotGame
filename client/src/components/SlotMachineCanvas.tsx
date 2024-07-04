@@ -81,7 +81,7 @@ export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
               drawWinningLines(
                 g,
                 slotHeight,
-                windowWidth * 0.391,
+                windowWidth * 0.391 * (isMobile ? 2 : 1),
                 isMobile,
                 winningMatrix
               )
@@ -97,7 +97,7 @@ export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
               new TextStyle({
                 align: "left",
                 fontFamily: '"Source Sans Pro", Helvetica, sans-serif',
-                fontSize: 70,
+                fontSize: isMobile ? 45 : 70,
                 fontWeight: "400",
                 fill: ["#ffffff", "#F8DE22"], // gradient
                 stroke: "black",
