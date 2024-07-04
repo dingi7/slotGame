@@ -60,7 +60,6 @@ export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
         options={{ backgroundAlpha: 0 }}
         width={windowWidth * 0.391 * (isMobile ? 2 : 1)}
         height={totalHeight}
-        className="bg-white"
       >
         {columnStates.map((column, colIndex) => (
           <SlotReel
