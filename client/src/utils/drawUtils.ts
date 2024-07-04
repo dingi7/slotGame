@@ -1,7 +1,5 @@
 import * as PIXI from "pixi.js";
 
-import { BlurFilter } from "@pixi/filter-blur";
-
 // export const drawRect = (graphics: PIXI.Graphics, windowWidth: number, slotHeight: number, isMobile: boolean) => {
 //   graphics.clear();
 //   graphics.lineStyle(5, 0x966304, 1);
@@ -92,92 +90,15 @@ const drawDiagonalLine = (
   graphics.lineTo(x2, y2);
 };
 
-// export const drawWinningLines = (
-//   graphics: PIXI.Graphics,
-//   slotHeight: number,
-//   windowWidth: number,
-//   isMobile: boolean,
-//   winningMatrix: boolean[][]
-// ) => {
-//   console.log(windowWidth);
-//   graphics.clear();
-//   graphics.lineStyle(LINE_WIDTH, LINE_COLOR, LINE_ALPHA);
-
-//   const columnWidth = windowWidth / 3;
-//   const firstColX2 = columnWidth;
-//   const secondColX1 = columnWidth;
-//   const secondColX2 = columnWidth * 2;
-//   const thirdColX1 = columnWidth * 2;
-//   const thirdColX2 = windowWidth;
-
-//   const checkDiagonalWin = (matrix: boolean[][]): boolean[] => {
-//     const diagonal1 = matrix[0][0] && matrix[1][1] && matrix[2][2];
-//     const diagonal2 = matrix[0][2] && matrix[1][1] && matrix[2][0];
-//     return [diagonal1, diagonal2];
-//   };
-
-//   const [diagonal1, diagonal2] = checkDiagonalWin(winningMatrix);
-
-//   if (diagonal1) {
-//     return drawDiagonalLine(graphics, 0, 0, windowWidth, slotHeight * 3);
-//   }
-
-//   if (diagonal2) {
-//     return drawDiagonalLine(graphics, 0, slotHeight * 3, windowWidth, 0);
-//   }
-
-//   const checkVerticalWin = (matrix: boolean[][]): boolean[] => {
-//     return matrix[0].map((_, colIndex) => matrix[0][colIndex] && matrix[1][colIndex] && matrix[2][colIndex]);
-//   };
-
-//   const verticalWins = checkVerticalWin(winningMatrix);
-
-//   // Draw lines based on the winningMatrix
-//   for (let row = 0; row < 3; row++) {
-//     for (let col = 0; col < 3; col++) {
-//       const y = slotHeight * (row + 0.5);
-//       const x = columnWidth * (col + 0.5);
-
-//       if (winningMatrix[row][col]) {
-//         if (verticalWins[col]) {
-//           return drawVerticalLine(graphics, x, 0, slotHeight * 3);
-//         } else {
-//           switch (col) {
-//             case 0:
-//               if (!diagonal1 && !diagonal2) {
-//                 drawHorizontalLine(graphics, 0, y, firstColX2);
-//               }
-//               break;
-//             case 1:
-//               drawHorizontalLine(graphics, secondColX1, y, secondColX2);
-//               break;
-//             case 2:
-//               if (!diagonal1 && !diagonal2) {
-//                 drawHorizontalLine(graphics, thirdColX1, y, thirdColX2);
-//               }
-//               break;
-//           }
-//         }
-//       }
-//     }
-//   }
-
-//   graphics.endFill();
-// };
-
 export const drawWinningLines = (
   graphics: PIXI.Graphics,
   slotHeight: number,
   windowWidth: number,
   isMobile: boolean,
   winningMatrix: boolean[][]
-): [number, number][] => {
+) => {
   graphics.clear();
   graphics.lineStyle(LINE_WIDTH, LINE_COLOR, LINE_ALPHA);
-
-  const columnWidth = windowWidth / 3;
-  const padding = 0; // Fixed padding value
-  let linePositions: [number, number][] = [];
 
   const checkDiagonalWin = (matrix: boolean[][]): boolean[] => {
     const diagonal1 = matrix[0][0] && matrix[1][1] && matrix[2][2];
@@ -188,13 +109,11 @@ export const drawWinningLines = (
   const [diagonal1, diagonal2] = checkDiagonalWin(winningMatrix);
 
   if (diagonal1) {
-    drawDiagonalLine(graphics, 0, 0, windowWidth, slotHeight * 3);
-    linePositions.push([(windowWidth * 0.37 * (isMobile ? 2 : 1)) / 2, slotHeight + slotHeight / 3]);
+    drawDiagonalLine(graphics, 0, 0,  windowWidth * 0.391, slotHeight * 3);
   }
 
   if (diagonal2) {
-    drawDiagonalLine(graphics, 0, slotHeight * 3, windowWidth, 0);
-    linePositions.push([(windowWidth * 0.37 * (isMobile ? 2 : 1)) / 2, slotHeight + slotHeight / 3]);
+    drawDiagonalLine(graphics, 0, slotHeight * 3, windowWidth * 0.391, 0);
   }
 
   const checkVerticalWin = (matrix: boolean[][]): boolean[] => {
@@ -207,9 +126,9 @@ export const drawWinningLines = (
 
   for (let col = 0; col < 3; col++) {
     if (verticalWins[col]) {
-      const x = columnWidth * col + padding + columnWidth / 2;
-      drawVerticalLine(graphics, x, 0, slotHeight * 3);
-      linePositions.push([x, slotHeight * 1.5]);
+      const x = windowWidth / 3 * (col + 0.5);
+      const textX = (x + slotHeight * col) / 3.05;
+      drawVerticalLine(graphics, textX, 0, slotHeight * 3);
     }
   }
 
@@ -217,27 +136,9 @@ export const drawWinningLines = (
     const horizontalWin = winningMatrix[row].every((cell) => cell);
     if (horizontalWin) {
       const y = slotHeight * (row + 0.5);
-      drawHorizontalLine(graphics, padding, y, windowWidth - padding);
-      linePositions.push([(windowWidth - padding * 2) / 2, y]);
+      drawHorizontalLine(graphics, 0, y, windowWidth - 0);
     }
   }
 
   graphics.endFill();
-  return linePositions;
-};
-
-export const getLinePosition = (
-  winningMatrix: boolean[][],
-  slotHeight: number,
-  windowWidth: number,
-  isMobile: boolean
-): [number, number][] => {
-  const graphics = new PIXI.Graphics();
-  return drawWinningLines(
-    graphics,
-    slotHeight,
-    windowWidth,
-    isMobile,
-    winningMatrix
-  );
 };
