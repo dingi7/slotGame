@@ -13,7 +13,7 @@ export type Slot3x3 = {
 };
 
 export const payouts: Payouts = {
-    '111': 3,
+    '111': 1,
     '222': 2,
     '333': 5,
     '444': 4,

@@ -1,33 +1,33 @@
 import { Slot3x3 } from '../operations/slotMachine/payouts.model';
 
-export function updateWinningMatrix(winningLineIndex: number): boolean[][] {
+export function updateWinningMatrix(winningLineIndexs: number[]): boolean[][] {
     let winningMatrix: boolean[][] = [
         [false, false, false],
         [false, false, false],
         [false, false, false],
     ];
-
-    if (winningLineIndex < 3) {
-        // Mark the winning row
-        winningMatrix[winningLineIndex] = [true, true, true];
-    } else if (winningLineIndex < 6) {
-        // Mark the winning column
-        const columnIndex = winningLineIndex - 3;
-        winningMatrix[0][columnIndex] = true;
-        winningMatrix[1][columnIndex] = true;
-        winningMatrix[2][columnIndex] = true;
-    } else if (winningLineIndex === 6) {
-        // Mark the diagonal from top-left to bottom-right
-        winningMatrix[0][0] = true;
-        winningMatrix[1][1] = true;
-        winningMatrix[2][2] = true;
-    } else if (winningLineIndex === 7) {
-        // Mark the diagonal from bottom-left to top-right
-        winningMatrix[0][2] = true;
-        winningMatrix[1][1] = true;
-        winningMatrix[2][0] = true;
-    }
-
+    winningLineIndexs.forEach((winningLineIndex) => {
+        if (winningLineIndex < 3) {
+            // Mark the winning row
+            winningMatrix[winningLineIndex] = [true, true, true];
+        } else if (winningLineIndex < 6) {
+            // Mark the winning column
+            const columnIndex = winningLineIndex - 3;
+            winningMatrix[0][columnIndex] = true;
+            winningMatrix[1][columnIndex] = true;
+            winningMatrix[2][columnIndex] = true;
+        } else if (winningLineIndex === 6) {
+            // Mark the diagonal from top-left to bottom-right
+            winningMatrix[0][0] = true;
+            winningMatrix[1][1] = true;
+            winningMatrix[2][2] = true;
+        } else if (winningLineIndex === 7) {
+            // Mark the diagonal from bottom-left to top-right
+            winningMatrix[0][2] = true;
+            winningMatrix[1][1] = true;
+            winningMatrix[2][0] = true;
+        }
+    });
     return winningMatrix;
 }
 

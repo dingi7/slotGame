@@ -1,4 +1,7 @@
-import { createLines, updateWinningMatrix } from '../../util/paylineHelpers.util';
+import {
+    createLines,
+    updateWinningMatrix,
+} from '../../util/paylineHelpers.util';
 import { payouts, GameSymbol, Reel, Slot3x3 } from './payouts.model';
 
 const reelSymbols: Reel = ['1', '2', '3', '4', '5', '6', '7', '8'];
@@ -22,21 +25,24 @@ function spin(): Slot3x3 {
     };
 }
 
-function findHighestPayout(lines: string[], payouts: any): [number, number] {
-    let maxPayout = 0;
-    let winningLineIndex = -1;
+function findPayoutCoefficient(
+    lines: string[],
+    payouts: {
+        [key: string]: number;
+    }
+): [number, number[]] {
+    let payout = 0;
+    let winningLineIndexs: number[] = [];
 
     lines.forEach((combination, index) => {
         if (payouts[combination] !== undefined) {
             const currentPayout = payouts[combination];
-            if (currentPayout > maxPayout) {
-                maxPayout = currentPayout;
-                winningLineIndex = index;
-            }
+            payout += currentPayout;
+            winningLineIndexs.push(index);
         }
     });
 
-    return [maxPayout, winningLineIndex];
+    return [payout, winningLineIndexs];
 }
 
 function calculatePayout(
@@ -44,19 +50,22 @@ function calculatePayout(
     betAmount: number
 ): [number, boolean[][]] {
     const lines = createLines(result);
-    const [maxPayout, winningLineIndex] = findHighestPayout(lines, payouts);
+    const [payoutCoefficient, winningLineIndexs] = findPayoutCoefficient(
+        lines,
+        payouts
+    );
 
-    const payout = maxPayout * betAmount;
-    const winningMatrix = updateWinningMatrix(winningLineIndex);
+    const totalPayout = payoutCoefficient * betAmount;
+    const winningMatrix = updateWinningMatrix(winningLineIndexs);
 
-    return [payout, winningMatrix];
+    return [totalPayout, winningMatrix];
 }
 
 export function play(
     betAmount: number
 ): [boolean, number, Slot3x3, boolean[][]] {
     const result = spin();
-    const [payout, winningMatrix] = calculatePayout(result, betAmount); 
+    const [payout, winningMatrix] = calculatePayout(result, betAmount);
     let win = payout > 0 ? true : false;
     return [win, payout, result, winningMatrix];
 }
