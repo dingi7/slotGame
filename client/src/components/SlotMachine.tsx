@@ -4,8 +4,8 @@ import { SlotMachineCanvas } from "./SlotMachineCanvas";
 import { SlotMachineFooter } from "./SlotMachineFooter";
 import { WinningModal } from "./modals/WinningModal";
 import slotBackground from "../assets/background.png";
-import { useSlotMachine } from "../hooks/useSlotMachineState";
 import useModal from "../hooks/useModal";
+import { useSlotMachine } from "../hooks/useSlotMachineState";
 
 export const SlotMachine: React.FC = () => {
   const { isModalOpen, closeModal, openModal } = useModal();
@@ -30,6 +30,7 @@ export const SlotMachine: React.FC = () => {
     payoutsHandler,
     tempWinning,
     winningMatrix,
+
   } = useSlotMachine({ closeModal, openModal });
 
   return (
@@ -65,6 +66,8 @@ export const SlotMachine: React.FC = () => {
           slotHeight={slotHeight}
           totalHeight={totalHeight}
           winningMatrix={winningMatrix}
+          hasHandledWin={hasHandledWin}
+          tempWinning={tempWinning}
         />
 
         {isMobile && (
