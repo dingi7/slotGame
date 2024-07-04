@@ -6,6 +6,7 @@ import { drawWinningLines, getLinePosition } from "../utils/drawUtils";
 
 import { ReelStateType } from "../types/slotMachineTypes";
 import { SlotReel } from "./SlotReel";
+import { TextStyle } from "@pixi/text";
 
 interface SlotMachineCanvasProps {
   columnStates: ReelStateType[];
@@ -17,7 +18,7 @@ interface SlotMachineCanvasProps {
   totalHeight: number;
   winningMatrix: boolean[][];
   hasHandledWin: boolean;
-  tempWinning: number
+  tempWinning: number;
 }
 
 export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
@@ -30,10 +31,11 @@ export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
   totalHeight,
   winningMatrix,
   hasHandledWin,
-  tempWinning
+  tempWinning,
 }) => {
-  const [linePossition, setLinePossition] =
-    useState<[lineX: number, lineY: number]>();
+  const [linePossition, setLinePossition] = useState<
+    [lineX: number, lineY: number] | undefined
+  >();
 
   useEffect(() => {
     if (hasHandledWin) {
@@ -87,7 +89,26 @@ export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
           />
         )}
         {!hasHandledWin && (
-          <Text text={tempWinning} x={linePossition?.[0]} y={linePossition?.[1]} />
+          <Text
+            text={tempWinning.toString()}
+            x={linePossition?.[0]}
+            y={linePossition?.[1]}
+            style={
+              new TextStyle({
+                align: "left",
+                fontFamily: '"Source Sans Pro", Helvetica, sans-serif',
+                fontSize: 70,
+                fontWeight: "400",
+                fill: ["#ffffff", "#F8DE22"], // gradient
+                stroke: "black",
+                strokeThickness: 4,
+                dropShadow: true,
+                dropShadowColor: "#ccced2",
+                dropShadowBlur: 4,
+                dropShadowAngle: Math.PI / 6,
+              })
+            }
+          />
         )}
       </Stage>
     </div>

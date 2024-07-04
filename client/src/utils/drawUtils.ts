@@ -189,15 +189,15 @@ export const drawWinningLines = (
 
   if (diagonal1) {
     drawDiagonalLine(graphics, 0, 0, windowWidth, slotHeight * 3);
-    lineX = (windowWidth * 0.391 * (isMobile ? 2 : 1)) / 2;
-    lineY = slotHeight + slotHeight / 2;
+    lineX = (windowWidth * 0.37 * (isMobile ? 2 : 1)) / 2;
+    lineY = slotHeight + slotHeight / 3;
     return [lineX, lineY];
   }
 
   if (diagonal2) {
     drawDiagonalLine(graphics, 0, slotHeight * 3, windowWidth, 0);
-    lineX = (windowWidth * 0.391 * (isMobile ? 2 : 1)) / 2;
-    lineY = slotHeight + slotHeight / 2;
+    lineX = (windowWidth * 0.37 * (isMobile ? 2 : 1)) / 2;
+    lineY = slotHeight + slotHeight / 3;
     return [lineX, lineY];
   }
 
@@ -221,8 +221,8 @@ export const drawWinningLines = (
       if (winningMatrix[row] && winningMatrix[row][col]) {
         if (verticalWins[col]) {
           drawVerticalLine(graphics, x, 0, slotHeight * 3);
-          lineX = (x + slotHeight * col) / 3.15;
-          lineY = slotHeight * 1.4;
+          lineX = (x + slotHeight * col) / 3.7;
+          lineY = slotHeight * 1.3;
           return [lineX, lineY];
         } else {
           switch (col) {
@@ -244,8 +244,8 @@ export const drawWinningLines = (
               if (!diagonal1 && !diagonal2) {
                 drawHorizontalLine(graphics, columnWidth * 2, y, windowWidth);
 
-                lineX = (windowWidth - columnWidth * 2) / 1.75;
-                lineY = (row + 0.5) * slotHeight;
+                lineX = (windowWidth - columnWidth * 2) / 1.82;
+                lineY = (row + 0.3) * slotHeight;
               }
               break;
           }
