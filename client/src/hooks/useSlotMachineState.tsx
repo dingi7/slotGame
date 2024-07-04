@@ -255,7 +255,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
             }, btnDissableDuration);
         }
         if (allStopped && hasHandledWin && isAutoSpinEnabled) {
-            const interval = hasWon ? 3000 : 1000;
+            const interval = hasWon ? 3000 : 500;
             setTimeout(() => {
                 startSpinning();
             }, interval);
