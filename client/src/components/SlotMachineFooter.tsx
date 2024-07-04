@@ -1,6 +1,7 @@
 import { ArrowDownFromLine, Landmark, RefreshCcw } from "lucide-react";
 
 import OptionsModal from "./modals/OptionsModal";
+import useLongPress from "../hooks/useLongPress";
 
 export const SlotMachineFooter = ({
   isMobile,
@@ -20,7 +21,8 @@ export const SlotMachineFooter = ({
   isOptionsModalOpen,
   payoutsHandler,
   tempWinning,
-  isAutoSpinEnabled
+  isAutoSpinEnabled,
+  setIsAutoSpinEnabled,
 }: {
   isMobile: boolean;
   balance: number;
@@ -40,10 +42,43 @@ export const SlotMachineFooter = ({
   payoutsHandler: (amount: number) => void;
   tempWinning: number;
   isAutoSpinEnabled: boolean;
+  setIsAutoSpinEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const onFailHandler = () => {
+    console.log(hasHandledWin);
+
+    if (hasHandledWin) {
+      startSpinning();
+      return;
+    }
+    payoutsHandler(tempWinning);
+  };
+
+  const backspaceLongPress = useLongPress(
+    () => {
+      setIsAutoSpinEnabled(true);
+      console.log("done");
+      return;
+    },
+    1000,
+    onFailHandler
+  );
+
+  const handleBtnClick = () => {
+    if (!hasHandledWin && !isAutoSpinEnabled) {
+      payoutsHandler(tempWinning);
+      return;
+    }
+
+    if (isAutoSpinEnabled) {
+      setIsAutoSpinEnabled(false);
+      return;
+    }
+  };
+
   return (
     <div
-      className={` select-none relative h-[15%] bg-gradient-to-t w-full from-black via-black/50 to-transparent`}
+      className={` select-none relative h-[17%] bg-gradient-to-t w-full from-black via-black/50 to-transparent`}
     >
       <div
         className={`w-full md:w-[60%] mx-auto mb-0 mt-auto pb-4 flex  justify-evenly ${
@@ -121,48 +156,54 @@ export const SlotMachineFooter = ({
           ))}
 
         {!isMobile && (
-          <div className="flex justify-between items-center h-full gap-[4%]">
-            {hasHandledWin ? (
-              <button
-                className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square"
-                onClick={startSpinning}
-                disabled={
-                  spinningColumns.some((x) => x === true) || isButtonDisabled
-                }
-              >
-                <RefreshCcw
-                  className={`opacity-100 ${
-                    spinningColumns.some((x) => x === true)
-                      ? "animate-spin"
-                      : ""
-                  }`}
-                />
-              </button>
-            ) : (
-              <button
-                className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square"
-                onClick={() => payoutsHandler(tempWinning)}
-                disabled={
-                  spinningColumns.some((x) => x === true) || isButtonDisabled
-                }
-              >
-                <ArrowDownFromLine />
-              </button>
-            )}
-            {!hasHandledWin && !isAutoSpinEnabled && (
-              <button
-                className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-2/3 aspect-square"
-                onClick={openDoubleWinAmountModal}
-                disabled={
-                  spinningColumns.some((x) => x === true) || isButtonDisabled
-                }
-              >
-                <p className="flex items-baseline gap-[10%] font-semibold">
-                  <span className="text-base">X</span>
-                  <span className="text-2xl">2</span>
-                </p>
-              </button>
-            )}
+          <div className="flex flex-col  h-full gap-[1%] relative min-w-[15%]">
+            <div className="flex justify-between items-center h-full gap-[4%] pb-[12%] px-[2%]">
+              {isAutoSpinEnabled ? (
+                <button
+                  className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square"
+                  onClick={handleBtnClick}
+                >
+                  {hasHandledWin ? (
+                    <RefreshCcw className={`opacity-100 animate-spin`} />
+                  ) : (
+                    <ArrowDownFromLine />
+                  )}
+                </button>
+              ) : (
+                <button
+                  className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square" // Short press triggers startSpinning
+                  {...backspaceLongPress}
+                >
+                  {hasHandledWin ? (
+                    <RefreshCcw
+                      className={`opacity-100 ${
+                        spinningColumns.some((x) => x === true)
+                          ? "animate-spin"
+                          : ""
+                      }`}
+                    />
+                  ) : (
+                    <ArrowDownFromLine />
+                  )}
+                </button>
+              )}
+              
+              {!hasHandledWin && !isAutoSpinEnabled && (
+                <button
+                  className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-2/3 aspect-square"
+                  onClick={openDoubleWinAmountModal}
+                  disabled={
+                    spinningColumns.some((x) => x === true) || isButtonDisabled
+                  }
+                >
+                  <p className="flex items-baseline gap-[10%] font-semibold">
+                    <span className="text-base">X</span>
+                    <span className="text-2xl">2</span>
+                  </p>
+                </button>
+              )}
+            </div>
+            <p className="text-neutral-300/50 absolute bottom-0 left-0 w-full text-nowrap">hold for auto spin</p>
           </div>
         )}
 

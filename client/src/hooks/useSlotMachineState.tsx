@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 
 import { Asset, ReelStateType, Reels } from "../types/slotMachineTypes";
 import { playSound, stopSound } from "../utils/soundPlayer";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { ModalState } from "./useModal";
 import { assets } from "../assets/reelAssets";
@@ -31,7 +31,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
   const totalHeight = slotHeight * 3;
   const [spinIntervalDuration] = useState(60);
   const [hasHandledWin, setHasHandledWin] = useState<boolean>(true);
-  const [isAutoSpinEnabled, setIsAutoSpinEnabled] = useState<boolean>(true);
+  const [isAutoSpinEnabled, setIsAutoSpinEnabled] = useState<boolean>(false);
 
   const betOptions: { [key: number]: number[] } = {
     // Adjust the bet options here
@@ -133,9 +133,11 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
   };
 
   const payoutsHandler = (amount: number) => {
-    setBalance((prevBalance) => prevBalance + amount);
-    setLastWin(amount);
-    setHasHandledWin(true);
+    if (!hasHandledWin) {
+      setHasHandledWin(true);
+      setBalance((prevBalance) => prevBalance + amount);
+      setLastWin(amount);
+    }
   };
 
   const startSpinning = async () => {
@@ -201,30 +203,6 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
     }, totalDuration);
   };
 
-  //   useEffect(() => {
-  //     const allStopped = columnStates.every(
-  //       (column) => column.spinning === false
-  //     );
-  //     if (allStopped) {
-  //       stopSound();
-  //     }
-  //     if (allStopped && hasWon) {
-  //       setIsButtonDisabled(true);
-  //       setHasHandledWin(false);
-  //       playSound(winSound);
-
-  //       setTimeout(toggleLine, 3000);
-
-  //       setTimeout(() => {
-  //         openModal("win");
-  //       }, spinIntervalDuration);
-
-  //       setTimeout(() => {
-  //         setIsButtonDisabled(false);
-  //       }, btnDissableDuration);
-  //     }
-  //   }, [columnStates, hasWon]);
-
   useEffect(() => {
     const allStopped = columnStates.every(
       (column) => column.spinning === false
@@ -254,7 +232,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
         startSpinning();
       }, interval);
     }
-  }, [columnStates, hasWon, hasHandledWin]);
+  }, [columnStates, hasWon, hasHandledWin, isAutoSpinEnabled]);
 
   useEffect(() => {
     if (spinningReels.some((spinning) => spinning)) {
@@ -364,5 +342,6 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
     tempWinning,
     winningMatrix,
     isAutoSpinEnabled,
+    setIsAutoSpinEnabled,
   };
 };
