@@ -171,17 +171,17 @@ export const drawWinningLines = (
   windowWidth: number,
   isMobile: boolean,
   winningMatrix: boolean[][]
-): [number, number] => {
+): [number, number][] => {
   graphics.clear();
   graphics.lineStyle(LINE_WIDTH, LINE_COLOR, LINE_ALPHA);
 
   const columnWidth = windowWidth / 3;
-  let lineX = 0;
-  let lineY = 0;
+  const padding = 0; // Fixed padding value
+  let linePositions: [number, number][] = [];
 
   const checkDiagonalWin = (matrix: boolean[][]): boolean[] => {
-    const diagonal1 = matrix[0] && matrix[0][0] && matrix[1][1] && matrix[2][2];
-    const diagonal2 = matrix[0] && matrix[0][2] && matrix[1][1] && matrix[2][0];
+    const diagonal1 = matrix[0][0] && matrix[1][1] && matrix[2][2];
+    const diagonal2 = matrix[0][2] && matrix[1][1] && matrix[2][0];
     return [diagonal1, diagonal2];
   };
 
@@ -189,73 +189,41 @@ export const drawWinningLines = (
 
   if (diagonal1) {
     drawDiagonalLine(graphics, 0, 0, windowWidth, slotHeight * 3);
-    lineX = (windowWidth * 0.37 * (isMobile ? 2 : 1)) / 2;
-    lineY = slotHeight + slotHeight / 3;
-    return [lineX, lineY];
+    linePositions.push([(windowWidth * 0.37 * (isMobile ? 2 : 1)) / 2, slotHeight + slotHeight / 3]);
   }
 
   if (diagonal2) {
     drawDiagonalLine(graphics, 0, slotHeight * 3, windowWidth, 0);
-    lineX = (windowWidth * 0.37 * (isMobile ? 2 : 1)) / 2;
-    lineY = slotHeight + slotHeight / 3;
-    return [lineX, lineY];
+    linePositions.push([(windowWidth * 0.37 * (isMobile ? 2 : 1)) / 2, slotHeight + slotHeight / 3]);
   }
 
   const checkVerticalWin = (matrix: boolean[][]): boolean[] => {
-    if (!matrix[0]) {
-      return [false];
-    }
     return matrix[0].map(
-      (_, colIndex) =>
-        matrix[0][colIndex] && matrix[1][colIndex] && matrix[2][colIndex]
+      (_, colIndex) => matrix[0][colIndex] && matrix[1][colIndex] && matrix[2][colIndex]
     );
   };
 
   const verticalWins = checkVerticalWin(winningMatrix);
 
+  for (let col = 0; col < 3; col++) {
+    if (verticalWins[col]) {
+      const x = columnWidth * col + padding + columnWidth / 2;
+      drawVerticalLine(graphics, x, 0, slotHeight * 3);
+      linePositions.push([x, slotHeight * 1.5]);
+    }
+  }
+
   for (let row = 0; row < 3; row++) {
-    for (let col = 0; col < 3; col++) {
+    const horizontalWin = winningMatrix[row].every((cell) => cell);
+    if (horizontalWin) {
       const y = slotHeight * (row + 0.5);
-      const x = columnWidth * (col + 0.5);
-
-      if (winningMatrix[row] && winningMatrix[row][col]) {
-        if (verticalWins[col]) {
-          drawVerticalLine(graphics, x, 0, slotHeight * 3);
-          lineX = (x + slotHeight * col) / 3.7;
-          lineY = slotHeight * 1.3;
-          return [lineX, lineY];
-        } else {
-          switch (col) {
-            case 0:
-              if (!diagonal1 && !diagonal2) {
-                drawHorizontalLine(graphics, 0, y, columnWidth);
-                lineX = columnWidth / 2;
-                lineY = y;
-              }
-              break;
-            case 1:
-              drawHorizontalLine(graphics, columnWidth, y, columnWidth * 2);
-              lineX = columnWidth;
-              lineY = y;
-              break;
-            case 2:
-              console.log(row);
-
-              if (!diagonal1 && !diagonal2) {
-                drawHorizontalLine(graphics, columnWidth * 2, y, windowWidth);
-
-                lineX = (windowWidth - columnWidth * 2) / 1.82;
-                lineY = (row + 0.3) * slotHeight;
-              }
-              break;
-          }
-        }
-      }
+      drawHorizontalLine(graphics, padding, y, windowWidth - padding);
+      linePositions.push([(windowWidth - padding * 2) / 2, y]);
     }
   }
 
   graphics.endFill();
-  return [lineX, lineY];
+  return linePositions;
 };
 
 export const getLinePosition = (
@@ -263,7 +231,7 @@ export const getLinePosition = (
   slotHeight: number,
   windowWidth: number,
   isMobile: boolean
-): [number, number] => {
+): [number, number][] => {
   const graphics = new PIXI.Graphics();
   return drawWinningLines(
     graphics,
