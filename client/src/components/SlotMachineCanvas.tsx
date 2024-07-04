@@ -7,6 +7,7 @@ import { drawWinningLines, getLinePosition } from "../utils/drawUtils";
 import { ReelStateType } from "../types/slotMachineTypes";
 import { SlotReel } from "./SlotReel";
 import { TextStyle } from "@pixi/text";
+import SlotMachineWinText from "./SlotMachineWinText";
 
 interface SlotMachineCanvasProps {
   columnStates: ReelStateType[];
@@ -33,29 +34,6 @@ export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
   hasHandledWin,
   tempWinning,
 }) => {
-  const [linePossition, setLinePossition] = useState<
-    [lineX: number, lineY: number] | undefined
-  >();
-
-  useEffect(() => {
-    if (hasHandledWin) {
-      return;
-    }
-    const result = getLinePosition(
-      winningMatrix,
-      slotHeight,
-      windowWidth,
-      isMobile
-    );
-    console.log(result);
-
-    console.log(slotHeight * 1.85);
-    console.log(slotHeight / 2);
-
-    setLinePossition(
-      getLinePosition(winningMatrix, slotHeight, windowWidth, isMobile)
-    );
-  }, [hasHandledWin]);
   return (
     <div className="my-auto relative">
       <Stage
@@ -81,33 +59,20 @@ export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
               drawWinningLines(
                 g,
                 slotHeight,
-                windowWidth * 0.391 * (isMobile ? 2 : 1),
+                windowWidth * (isMobile ? 2 : 1),
                 isMobile,
                 winningMatrix
               )
             }
           />
         )}
-        {!hasHandledWin && (
-          <Text
-            text={tempWinning.toString()}
-            x={linePossition?.[0]}
-            y={linePossition?.[1]}
-            style={
-              new TextStyle({
-                align: "left",
-                fontFamily: '"Source Sans Pro", Helvetica, sans-serif',
-                fontSize: isMobile ? 45 : 70,
-                fontWeight: "400",
-                fill: ["#ffffff", "#F8DE22"], // gradient
-                stroke: "black",
-                strokeThickness: 4,
-                dropShadow: true,
-                dropShadowColor: "#ccced2",
-                dropShadowBlur: 4,
-                dropShadowAngle: Math.PI / 6,
-              })
-            }
+        {showLine && (
+          <SlotMachineWinText
+            tempWinning={tempWinning}
+            slotHeight={slotHeight}
+            windowWidth={windowWidth}
+            isMobile={isMobile}
+            winningMatrix={winningMatrix}
           />
         )}
       </Stage>

@@ -1,7 +1,5 @@
 import * as PIXI from "pixi.js";
 
-import { BlurFilter } from "@pixi/filter-blur";
-
 // export const drawRect = (graphics: PIXI.Graphics, windowWidth: number, slotHeight: number, isMobile: boolean) => {
 //   graphics.clear();
 //   graphics.lineStyle(5, 0x966304, 1);
@@ -171,13 +169,13 @@ export const drawWinningLines = (
   windowWidth: number,
   isMobile: boolean,
   winningMatrix: boolean[][]
-): [number, number][] => {
+) => {
+
   graphics.clear();
   graphics.lineStyle(LINE_WIDTH, LINE_COLOR, LINE_ALPHA);
 
   const columnWidth = windowWidth / 3;
   const padding = 0; // Fixed padding value
-  let linePositions: [number, number][] = [];
 
   const checkDiagonalWin = (matrix: boolean[][]): boolean[] => {
     const diagonal1 = matrix[0][0] && matrix[1][1] && matrix[2][2];
@@ -189,12 +187,10 @@ export const drawWinningLines = (
 
   if (diagonal1) {
     drawDiagonalLine(graphics, 0, 0, windowWidth, slotHeight * 3);
-    linePositions.push([(windowWidth * 0.37 * (isMobile ? 2 : 1)) / 2, slotHeight + slotHeight / 3]);
   }
 
   if (diagonal2) {
     drawDiagonalLine(graphics, 0, slotHeight * 3, windowWidth, 0);
-    linePositions.push([(windowWidth * 0.37 * (isMobile ? 2 : 1)) / 2, slotHeight + slotHeight / 3]);
   }
 
   const checkVerticalWin = (matrix: boolean[][]): boolean[] => {
@@ -207,9 +203,12 @@ export const drawWinningLines = (
 
   for (let col = 0; col < 3; col++) {
     if (verticalWins[col]) {
-      const x = columnWidth * col + padding + columnWidth / 2;
-      drawVerticalLine(graphics, x, 0, slotHeight * 3);
-      linePositions.push([x, slotHeight * 1.5]);
+      const x = columnWidth * (col + 0.5);
+      console.log("Line x", x);
+      const textX = (x + slotHeight * col) / 3.05;
+      console.log("Line textX", textX);
+      
+      drawVerticalLine(graphics, textX, 0, slotHeight * 3);
     }
   }
 
@@ -218,26 +217,8 @@ export const drawWinningLines = (
     if (horizontalWin) {
       const y = slotHeight * (row + 0.5);
       drawHorizontalLine(graphics, padding, y, windowWidth - padding);
-      linePositions.push([(windowWidth - padding * 2) / 2, y]);
     }
   }
 
   graphics.endFill();
-  return linePositions;
-};
-
-export const getLinePosition = (
-  winningMatrix: boolean[][],
-  slotHeight: number,
-  windowWidth: number,
-  isMobile: boolean
-): [number, number][] => {
-  const graphics = new PIXI.Graphics();
-  return drawWinningLines(
-    graphics,
-    slotHeight,
-    windowWidth,
-    isMobile,
-    winningMatrix
-  );
 };
