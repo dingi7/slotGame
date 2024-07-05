@@ -49,15 +49,13 @@ export const SlotMachineFooter = ({
       setIsAutoSpinEnabled(false);
       return;
     }
-
-    if (hasHandledWin) {
-      startSpinning();
-      return;
-    }
-    payoutsHandler(tempWinning);
   };
 
   const onShortClick = () => {
+    if (isAutoSpinEnabled) {
+      setIsAutoSpinEnabled(false);
+      return;
+    }
     if (hasHandledWin) {
       startSpinning();
     } else {
@@ -160,7 +158,9 @@ export const SlotMachineFooter = ({
                 className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square"
                 {...backspaceLongPress}
                 disabled={
-                  (spinningColumns.some((x) => x === true) && !isAutoSpinEnabled) || isButtonDisabled
+                  (spinningColumns.some((x) => x === true) &&
+                    !isAutoSpinEnabled) ||
+                  isButtonDisabled
                 }
               >
                 {hasHandledWin ? (

@@ -11,8 +11,12 @@ export default function useLongPress(
   const timerIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const callbackTriggeredRef = useRef(false);
   const failedTriggeredRef = useRef(false);
+  const clickHandledRef = useRef(false); // Add this ref to track click handling
 
   const handleClickEnd = () => {
+    if (clickHandledRef.current) return; // Prevent duplicate handling
+    clickHandledRef.current = true;
+
     const endTime = new Date();
     if (startTime) {
       const timeDifference = endTime.getTime() - startTime.getTime();
@@ -31,6 +35,7 @@ export default function useLongPress(
     if (startLongPress) {
       callbackTriggeredRef.current = false;
       failedTriggeredRef.current = false;
+      clickHandledRef.current = false; // Reset on new long press start
       timerIdRef.current = setTimeout(() => {
         callback();
         callbackTriggeredRef.current = true;
@@ -54,15 +59,26 @@ export default function useLongPress(
 
   return {
     onMouseDown: () => {
+      console.log("Mouse down");
       setStartLongPress(true);
       setStartTime(new Date());
     },
-    onMouseUp: handleClickEnd,
-    onMouseLeave: handleClickEnd,
+    onMouseUp: () => {
+      console.log("Mouse up");
+      handleClickEnd();
+    },
+    onMouseLeave: () => {
+      console.log("Mouse leave");
+      handleClickEnd();
+    },
     onTouchStart: () => {
+      console.log("Touch start");
       setStartLongPress(true);
       setStartTime(new Date());
     },
-    onTouchEnd: handleClickEnd,
+    onTouchEnd: () => {
+      console.log("Touch end");
+      handleClickEnd();
+    },
   };
 }
