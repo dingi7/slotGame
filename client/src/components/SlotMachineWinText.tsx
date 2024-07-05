@@ -43,11 +43,8 @@ const SlotMachineWinText = ({
     for (let col = 0; col < 3; col++) {
       if (verticalWins[col]) {
         const x = columnWidth * (col + 0.5);
-        console.log("Text x", x);
         textX = (x + slotHeight * col) / 3.05;
         textY = slotHeight * 1.5;
-        console.log("Text textX", textX);
-        console.log("Text textY", textY);
         break;
       }
     }

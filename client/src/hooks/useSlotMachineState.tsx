@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 
 import { Asset, ReelStateType, Reels } from "../types/slotMachineTypes";
 import { playSound, stopSound } from "../utils/soundPlayer";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ModalState } from "./useModal";
 import { assets } from "../assets/reelAssets";
@@ -106,8 +106,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
           }
         }
       }
-      console.log(desiredNums);
-      console.log(newState);
+
 
       return newState;
     });

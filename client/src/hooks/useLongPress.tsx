@@ -59,25 +59,20 @@ export default function useLongPress(
 
   return {
     onMouseDown: () => {
-      console.log("Mouse down");
       setStartLongPress(true);
       setStartTime(new Date());
     },
     onMouseUp: () => {
-      console.log("Mouse up");
       handleClickEnd();
     },
     onMouseLeave: () => {
-      console.log("Mouse leave");
       handleClickEnd();
     },
     onTouchStart: () => {
-      console.log("Touch start");
       setStartLongPress(true);
       setStartTime(new Date());
     },
     onTouchEnd: () => {
-      console.log("Touch end");
       handleClickEnd();
     },
   };

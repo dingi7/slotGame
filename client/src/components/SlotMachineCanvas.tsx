@@ -1,13 +1,12 @@
 import * as PIXI from "pixi.js";
 
-import { Graphics, Stage, Text } from "@pixi/react";
-import React, { useEffect, useState } from "react";
-import { drawWinningLines, getLinePosition } from "../utils/drawUtils";
+import { Graphics, Stage } from "@pixi/react";
 
+import React from "react";
 import { ReelStateType } from "../types/slotMachineTypes";
-import { SlotReel } from "./SlotReel";
-import { TextStyle } from "@pixi/text";
 import SlotMachineWinText from "./SlotMachineWinText";
+import { SlotReel } from "./SlotReel";
+import { drawWinningLines } from "../utils/drawUtils";
 
 interface SlotMachineCanvasProps {
   columnStates: ReelStateType[];
@@ -31,13 +30,23 @@ export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
   slotHeight,
   totalHeight,
   winningMatrix,
-  hasHandledWin,
   tempWinning,
 }) => {
+  const powerPreference =
+    import.meta.env.VITE_HIGH_PERFORMANCE === "TRUE"
+      ? "high-performance"
+      : "default";
   return (
     <div className="my-auto relative">
       <Stage
-        options={{ backgroundAlpha: 0 }}
+        options={{
+          backgroundAlpha: 0,
+          antialias: false,
+          powerPreference: powerPreference,
+          sharedTicker: true,
+          autoStart: true,
+          autoDensity: false,
+        }}
         width={windowWidth * 0.391 * (isMobile ? 2 : 1)}
         height={totalHeight}
       >

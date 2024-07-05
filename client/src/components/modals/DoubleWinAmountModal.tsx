@@ -53,7 +53,6 @@ export const DoubleWinAmountModal = ({
         setTimeout(() => {
             closeModal();
         }, 2000);
-        console.log(result);
     };
 
     return (
