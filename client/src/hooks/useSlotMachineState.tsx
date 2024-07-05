@@ -135,6 +135,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
   const payoutsHandler = (amount: number) => {
     if (!hasHandledWin) {
       setHasHandledWin(true);
+      setHasWon(false);
       setBalance((prevBalance) => prevBalance + amount);
       setLastWin(amount);
     }

@@ -45,7 +45,10 @@ export const SlotMachineFooter = ({
   setIsAutoSpinEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const onFailHandler = () => {
-    console.log(hasHandledWin);
+    if (isAutoSpinEnabled) {
+      setIsAutoSpinEnabled(false);
+      return;
+    }
 
     if (hasHandledWin) {
       startSpinning();
@@ -54,27 +57,22 @@ export const SlotMachineFooter = ({
     payoutsHandler(tempWinning);
   };
 
+  const onShortClick = () => {
+    if (hasHandledWin) {
+      startSpinning();
+    } else {
+      payoutsHandler(tempWinning);
+    }
+  };
+
   const backspaceLongPress = useLongPress(
     () => {
       setIsAutoSpinEnabled(true);
-      console.log("done");
-      return;
     },
     1000,
-    onFailHandler
+    onFailHandler,
+    onShortClick
   );
-
-  const handleBtnClick = () => {
-    if (!hasHandledWin && !isAutoSpinEnabled) {
-      payoutsHandler(tempWinning);
-      return;
-    }
-
-    if (isAutoSpinEnabled) {
-      setIsAutoSpinEnabled(false);
-      return;
-    }
-  };
 
   return (
     <div
@@ -157,37 +155,28 @@ export const SlotMachineFooter = ({
 
         {!isMobile && (
           <div className="flex flex-col  h-full gap-[1%] relative min-w-[15%]">
-            <div className="flex justify-between items-center h-full gap-[4%] pb-[12%] px-[2%]">
-              {isAutoSpinEnabled ? (
-                <button
-                  className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square"
-                  onClick={handleBtnClick}
-                >
-                  {hasHandledWin ? (
-                    <RefreshCcw className={`opacity-100 animate-spin`} />
-                  ) : (
-                    <ArrowDownFromLine />
-                  )}
-                </button>
-              ) : (
-                <button
-                  className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square" // Short press triggers startSpinning
-                  {...backspaceLongPress}
-                >
-                  {hasHandledWin ? (
-                    <RefreshCcw
-                      className={`opacity-100 ${
-                        spinningColumns.some((x) => x === true)
-                          ? "animate-spin"
-                          : ""
-                      }`}
-                    />
-                  ) : (
-                    <ArrowDownFromLine />
-                  )}
-                </button>
-              )}
-              
+            <div className="flex justify-between items-center h-full gap-[4%] pb-[12%] pl-[20%]">
+              <button
+                className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square"
+                {...backspaceLongPress}
+                disabled={
+                  (spinningColumns.some((x) => x === true) && !isAutoSpinEnabled) || isButtonDisabled
+                }
+              >
+                {hasHandledWin ? (
+                  <RefreshCcw
+                    className={`opacity-100 ${
+                      spinningColumns.some((x) => x === true) ||
+                      isAutoSpinEnabled
+                        ? "animate-spin"
+                        : ""
+                    }`}
+                  />
+                ) : (
+                  <ArrowDownFromLine />
+                )}
+              </button>
+
               {!hasHandledWin && !isAutoSpinEnabled && (
                 <button
                   className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-2/3 aspect-square"
@@ -203,7 +192,9 @@ export const SlotMachineFooter = ({
                 </button>
               )}
             </div>
-            <p className="text-neutral-300/50 absolute bottom-0 left-0 w-full text-nowrap">hold for auto spin</p>
+            <p className="text-neutral-300/50 absolute bottom-0 left-0 w-full text-nowrap">
+              hold for auto spin
+            </p>
           </div>
         )}
 
