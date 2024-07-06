@@ -80,20 +80,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
         { ...prevState[2], assets: [...prevState[2].assets] },
       ];
 
-      for (let row = 0; row < rowsCount; row++) {
-        const rowSymbols = desiredNums[row];
 
-        rowSymbols.forEach((symbol: number, colIndex: number) => {
-          const symbolIndex = newState[colIndex].assets.findIndex(
-            (asset) => asset.value === symbol
-          );
-
-          if (symbolIndex !== -1) {
-            // Remove the symbol from the array
-            newState[colIndex].assets.splice(symbolIndex, 1);
-          }
-        });
-      }
 
       // Push the desired symbols back to the end of the respective column's assets array
       for (let col = 0; col < columnsCount; col++) {
