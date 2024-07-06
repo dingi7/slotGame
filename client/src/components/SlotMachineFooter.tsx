@@ -44,12 +44,7 @@ export const SlotMachineFooter = ({
   isAutoSpinEnabled: boolean;
   setIsAutoSpinEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const onFailHandler = () => {
-    if (isAutoSpinEnabled) {
-      setIsAutoSpinEnabled(false);
-      return;
-    }
-  };
+
 
   const onShortClick = () => {
     if (isAutoSpinEnabled) {
@@ -70,7 +65,6 @@ export const SlotMachineFooter = ({
       setIsAutoSpinEnabled(true);
     },
     1000,
-    onFailHandler,
     onShortClick
   );
 

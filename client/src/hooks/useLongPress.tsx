@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 export default function useLongPress(
   callback = () => {},
   ms = 300,
-  onFailHandler: () => void,
+
   onShortClick: () => void
 ) {
   const [startLongPress, setStartLongPress] = useState(false);
@@ -44,7 +44,6 @@ export default function useLongPress(
       if (timerIdRef.current) {
         clearTimeout(timerIdRef.current);
         if (!callbackTriggeredRef.current && !failedTriggeredRef.current) {
-          onFailHandler();
           failedTriggeredRef.current = true;
         }
       }
@@ -55,7 +54,7 @@ export default function useLongPress(
         clearTimeout(timerIdRef.current);
       }
     };
-  }, [callback, ms, startLongPress, onFailHandler]);
+  }, [callback, ms, startLongPress, onShortClick]);
 
   return {
     onMouseDown: () => {
