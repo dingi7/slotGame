@@ -14,7 +14,7 @@ export const SlotMachine: React.FC = () => {
     windowWidth,
     slotHeight,
     totalHeight,
-    columnStates,
+    reelStates,
     spinningReels,
     positions,
     showLine,
@@ -31,7 +31,7 @@ export const SlotMachine: React.FC = () => {
     tempWinning,
     winningMatrix,
     isAutoSpinEnabled,
-    setIsAutoSpinEnabled
+    setIsAutoSpinEnabled,
   } = useSlotMachine({ closeModal, openModal });
 
   return (
@@ -59,7 +59,7 @@ export const SlotMachine: React.FC = () => {
         </div>
 
         <SlotMachineCanvas
-          columnStates={columnStates}
+          reelStates={reelStates}
           positions={positions}
           showLine={showLine}
           windowWidth={windowWidth}

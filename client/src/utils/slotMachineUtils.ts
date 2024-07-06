@@ -4,8 +4,6 @@ import { assets } from "../assets/reelAssets";
 
 const rowsPerReel = 3;
 
-
-
 export const shuffleArray = (array: Asset[]): any[] => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -20,7 +18,7 @@ const defaultState = (): ReelStateType => ({
 });
 
 export const initializeAssetsMatrix = (): Reels => {
-  const columnStates: Reels = [defaultState(), defaultState(), defaultState()];
+  const reelStates: Reels = [defaultState(), defaultState(), defaultState()];
 
-  return columnStates;
+  return reelStates;
 };

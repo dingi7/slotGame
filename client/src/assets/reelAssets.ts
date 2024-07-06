@@ -12,42 +12,42 @@ import Wreath from "./wreath.png";
 export const assets = [
   {
     image: Sandal,
-    value: 0,
+    key: 0,
   },
   {
     image: Lyre,
-    value: 1,
+    key: 1,
   },
   {
     image: Helmet,
-    value: 2,
+    key: 2,
   },
   {
     image: Column,
-    value: 3,
+    key: 3,
   },
   {
     image: Vase,
-    value: 4,
+    key: 4,
   },
   {
     image: Torch,
-    value: 5,
+    key: 5,
   },
   {
     image: Shield,
-    value: 6,
+    key: 6,
   },
   {
     image: Typhoeus,
-    value: 7,
+    key: 7,
   },
   {
     image: Wreath,
-    value: 8,
+    key: 8,
   },
   {
     image: WildCard,
-    value: 9,
+    key: 9,
   },
 ];

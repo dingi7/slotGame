@@ -1,7 +1,6 @@
-
 export type Asset = {
   image: string;
-  value: number;
+  key: number;
 };
 
 export type ReelStateType = {

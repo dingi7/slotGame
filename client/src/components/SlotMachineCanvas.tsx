@@ -9,7 +9,7 @@ import { SlotReel } from "./SlotReel";
 import { drawWinningLines } from "../utils/drawUtils";
 
 interface SlotMachineCanvasProps {
-  columnStates: ReelStateType[];
+  reelStates: ReelStateType[];
   positions: number[];
   showLine: boolean;
   windowWidth: number;
@@ -22,7 +22,7 @@ interface SlotMachineCanvasProps {
 }
 
 export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
-  columnStates,
+  reelStates,
   positions,
   showLine,
   windowWidth,
@@ -50,7 +50,7 @@ export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
         width={windowWidth * 0.391 * (isMobile ? 2 : 1)}
         height={totalHeight}
       >
-        {columnStates.map((column, colIndex) => (
+        {reelStates.map((column, colIndex) => (
           <SlotReel
             key={colIndex}
             column={column}

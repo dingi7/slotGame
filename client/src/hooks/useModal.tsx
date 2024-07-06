@@ -1,11 +1,19 @@
 import { useState } from "react";
 
+export enum ModalTypes {
+  Win = "win",
+  InsufficientFunds = "insufficientFunds",
+  DoubleWinAmountModal = "doubleWinAmountModal",
+  OptionsModal = "optionsModal",
+  All = "",
+}
+
 export type ModalState =
-  | "win"
-  | "insufficientFunds"
-  | "doubleWinAmountModal"
-  | "optionsModal"
-  | "";
+  | ModalTypes.Win
+  | ModalTypes.InsufficientFunds
+  | ModalTypes.DoubleWinAmountModal
+  | ModalTypes.OptionsModal
+  | ModalTypes.All;
 
 const useModal = () => {
   const [isModalOpen, setIsModalOpen] = useState({
@@ -22,7 +30,7 @@ const useModal = () => {
     }));
   };
 
-  const closeModal = (modal: ModalState = "") => {
+  const closeModal = (modal: ModalState = ModalTypes.All) => {
     if (!modal) {
       // Close all modals
       setIsModalOpen({

@@ -10,6 +10,7 @@ import { initializeAssetsMatrix } from "../utils/slotMachineUtils";
 import { sendSpinRequest } from "../api/requests";
 import spinningSound from "../assets/spinning.wav";
 import winSound from "../assets/win.wav";
+import { ModalTypes } from "./useModal";
 
 type ReelIndex = 0 | 1 | 2;
 
@@ -52,54 +53,49 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
   const tickers: PIXI.Ticker[] = Array(columnsCount).fill(new PIXI.Ticker());
 
   const [betAmount, setBetAmount] = useState(fixedBetAmounts[0]);
-  const [spinningReels, setSpinningColumns] = useState(Array(3).fill(false));
-  const [columnStates, setColumnStates] = useState<Reels>(
-    initializeAssetsMatrix
-  );
+  const [spinningReels, setSpinningReels] = useState(Array(3).fill(false));
+  const [reelStates, setReelStates] = useState<Reels>(initializeAssetsMatrix);
   const [positions, setPositions] = useState(Array(columnsCount).fill(0));
   const [showLine, setShowLine] = useState(false);
 
   const [balance, setBalance] = useState(5000);
   const [lastWin, setLastWin] = useState(0);
-  const [desiredNums, setDesiredNums] = useState<number[][]>();
+  const [desiredIconsKey, setdesiredIconsKey] = useState<number[][]>();
   const [tempWinning, setTempWinning] = useState<number>(0);
   const [hasWon, setHasWon] = useState<boolean>(false);
 
   const [winningMatrix, setWinningMatrix] = useState<boolean[][]>([]);
 
   useEffect(() => {
-    if (!desiredNums) {
+    if (!desiredIconsKey) {
       return;
     }
 
-    setColumnStates((prevState) => {
+    setReelStates((prevState) => {
       // Create a copy of the previous state to avoid direct mutation
-      const newState: Reels = [
+      const newReelState: Reels = [
         { ...prevState[0], assets: [...prevState[0].assets] },
         { ...prevState[1], assets: [...prevState[1].assets] },
         { ...prevState[2], assets: [...prevState[2].assets] },
       ];
 
-
-
       // Push the desired symbols back to the end of the respective column's assets array
-      for (let col = 0; col < columnsCount; col++) {
+      for (let reel = 0; reel < columnsCount; reel++) {
         for (let row = 0; row < rowsCount; row++) {
-          const desiredNum = desiredNums[row][col];
+          const desiredIconKey = desiredIconsKey[row][reel];
           // Assuming you have an `Asset` constructor or factory function to create an Asset object
-          const asset = assets.find((x: Asset) => x.value === desiredNum);
-          if (asset) {
-            newState[col].assets.push(asset);
+          const desiredIcon = assets.find(
+            (x: Asset) => x.key === desiredIconKey
+          );
+          if (desiredIcon) {
+            newReelState[reel].assets.push(desiredIcon);
           }
         }
       }
 
-
-      return newState;
+      return newReelState;
     });
-  }, [desiredNums]);
-
-  //ensure that desired numbers match reels state
+  }, [desiredIconsKey]);
 
   const [reelIconsMoved, setReelIcons] = useState(Array(columnsCount).fill(0));
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -107,7 +103,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
   const handleSpinRequest = async () => {
     const result = await sendSpinRequest(betAmount);
     setBalance((prevBalance) => prevBalance - betAmount + result.payout);
-    setDesiredNums(
+    setdesiredIconsKey(
       Object.values(result.reels).map((reel) => reel.map((num) => Number(num)))
     );
     if (result.win) {
@@ -132,11 +128,11 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
     setHasHandledWin(true);
     closeModal();
     if (balance - betAmount < 0) {
-      openModal("insufficientFunds");
+      openModal(ModalTypes.InsufficientFunds);
       return;
     }
     stopSound();
-    setColumnStates((prevState: Reels) => [
+    setReelStates((prevState: Reels) => [
       {
         ...prevState[0],
         assets: prevState[0].assets.slice(-9),
@@ -152,14 +148,14 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
     ]);
 
     playSound(spinningSound);
-    setColumnStates(
+    setReelStates(
       (prevStates) =>
         prevStates.map((state) => ({
           ...state,
           spinning: true,
         })) as Reels
     );
-    setSpinningColumns(Array(columnsCount).fill(true));
+    setSpinningReels(Array(columnsCount).fill(true));
     await handleSpinRequest();
   };
 
@@ -191,9 +187,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
   };
 
   useEffect(() => {
-    const allStopped = columnStates.every(
-      (column) => column.spinning === false
-    );
+    const allStopped = reelStates.every((column) => column.spinning === false);
     if (allStopped) {
       stopSound();
     }
@@ -206,7 +200,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
       toggleLine();
 
       setTimeout(() => {
-        openModal("win");
+        openModal(ModalTypes.Win);
       }, spinIntervalDuration);
 
       setTimeout(() => {
@@ -219,27 +213,27 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
         startSpinning();
       }, interval);
     }
-  }, [columnStates, hasWon, hasHandledWin, isAutoSpinEnabled]);
+  }, [reelStates, hasWon, hasHandledWin, isAutoSpinEnabled]);
 
   useEffect(() => {
     if (spinningReels.some((spinning) => spinning)) {
       const interval = setInterval(() => {
         resetColumnPositions();
-        setColumnStates(
+        setReelStates(
           (prevStates: Reels) =>
             prevStates.map((column: ReelStateType, reelIndex: number) => {
               if (!column.spinning) return column;
 
-              const newAssets = [...column.assets];
-              const lastElement = newAssets.pop();
+              const nextIcons = [...column.assets];
+              const lastElement = nextIcons.pop();
               if (lastElement) {
-                newAssets.unshift(lastElement);
+                nextIcons.unshift(lastElement);
                 handleSpinning(reelIndex);
               }
 
               if (reelIconsMoved[reelIndex] < minSpinTimes) {
                 moveReelIcon(reelIndex as ReelIndex);
-                return { ...column, assets: newAssets };
+                return { ...column, assets: nextIcons };
               }
 
               const previousReelStopped = !spinningReels[reelIndex - 1];
@@ -253,20 +247,20 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
                     reelIconsMoved[reelIndex - 1] + minIconsToBeMoved)
               ) {
                 if (
-                  newAssets[1].value === desiredNums![0][reelIndex] &&
-                  newAssets[2].value === desiredNums![1][reelIndex] &&
-                  newAssets[3].value === desiredNums![2][reelIndex]
+                  nextIcons[1].key === desiredIconsKey![0][reelIndex] &&
+                  nextIcons[2].key === desiredIconsKey![1][reelIndex] &&
+                  nextIcons[3].key === desiredIconsKey![2][reelIndex]
                 ) {
-                  setSpinningColumns((prev) => {
-                    const newSpinningColumns = [...prev];
-                    newSpinningColumns[reelIndex] = false;
+                  setSpinningReels((prev) => {
+                    const newSpinningReels = [...prev];
+                    newSpinningReels[reelIndex] = false;
                     tickers[reelIndex].stop();
                     setReelIcons(Array(columnsCount).fill(0));
-                    return newSpinningColumns;
+                    return newSpinningReels;
                   });
                   return {
                     ...column,
-                    assets: newAssets,
+                    assets: nextIcons,
                     spinning: false,
                   };
                 }
@@ -274,14 +268,14 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
 
               moveReelIcon(reelIndex as ReelIndex);
 
-              return { ...column, assets: newAssets };
+              return { ...column, assets: nextIcons };
             }) as Reels
         );
       }, spinIntervalDuration);
 
       return () => clearInterval(interval);
     }
-  }, [spinningReels, desiredNums, reelIconsMoved]);
+  }, [spinningReels, desiredIconsKey, reelIconsMoved]);
 
   const handleSpinning = (columnIndex: number) => {
     const move = () => {
@@ -310,7 +304,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
     windowWidth,
     slotHeight,
     totalHeight,
-    columnStates,
+    reelStates,
     spinningReels,
     positions,
     showLine,
