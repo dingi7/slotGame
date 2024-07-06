@@ -32,6 +32,7 @@ export const SlotMachine: React.FC = () => {
     winningMatrix,
     isAutoSpinEnabled,
     setIsAutoSpinEnabled,
+    autoSpinIntervalRef
   } = useSlotMachine({ closeModal, openModal });
 
   return (
@@ -120,6 +121,7 @@ export const SlotMachine: React.FC = () => {
         tempWinning={tempWinning}
         isAutoSpinEnabled={isAutoSpinEnabled}
         setIsAutoSpinEnabled={setIsAutoSpinEnabled}
+        autoSpinIntervalRef={autoSpinIntervalRef}
       />
     </div>
   );

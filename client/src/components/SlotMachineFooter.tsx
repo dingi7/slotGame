@@ -1,5 +1,6 @@
 import { ArrowDownFromLine, Landmark, RefreshCcw } from "lucide-react";
 
+import { MutableRefObject } from "react";
 import OptionsModal from "./modals/OptionsModal";
 import useLongPress from "../hooks/useLongPress";
 
@@ -23,6 +24,7 @@ export const SlotMachineFooter = ({
   tempWinning,
   isAutoSpinEnabled,
   setIsAutoSpinEnabled,
+  autoSpinIntervalRef,
 }: {
   isMobile: boolean;
   balance: number;
@@ -43,10 +45,14 @@ export const SlotMachineFooter = ({
   tempWinning: number;
   isAutoSpinEnabled: boolean;
   setIsAutoSpinEnabled: React.Dispatch<React.SetStateAction<boolean>>;
+  autoSpinIntervalRef: MutableRefObject<number | null>;
 }) => {
   const onShortClick = () => {
     if (isAutoSpinEnabled) {
       setIsAutoSpinEnabled(false);
+      if (autoSpinIntervalRef.current) {
+        clearTimeout(autoSpinIntervalRef.current);
+      }
       return;
     }
     if (!hasWon) {
@@ -55,6 +61,7 @@ export const SlotMachineFooter = ({
     }
     if (hasWon && !isAutoSpinEnabled) {
       payoutsHandler(tempWinning);
+      return;
     }
   };
 

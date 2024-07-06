@@ -57,14 +57,17 @@ export default function useLongPress(
   }, [callback, ms, startLongPress, onShortClick]);
 
   return {
-    onMouseDown: () => {
+    onMouseDown: (event: React.MouseEvent) => {
+      event.preventDefault();
       setStartLongPress(true);
       setStartTime(new Date());
     },
-    onMouseUp: () => {
+    onMouseUp: (event: React.MouseEvent) => {
+      event.preventDefault();
       handleClickEnd();
     },
-    onMouseLeave: () => {
+    onMouseLeave: (event: React.MouseEvent) => {
+      event.preventDefault();
       handleClickEnd();
     },
     onTouchStart: (event: React.TouchEvent) => {
