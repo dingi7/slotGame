@@ -124,25 +124,40 @@ export const SlotMachineFooter = ({
         />
 
         {isMobile && (
-          <button
-            className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square"
-            {...backspaceLongPress}
-            disabled={
-              spinningColumns.some((x) => x === true) && !isAutoSpinEnabled
-            }
-          >
-            {!hasWon || spinningColumns.some((x) => x === true) ? (
-              <RefreshCcw
-                className={`opacity-100 ${
-                  spinningColumns.some((x) => x === true) || isAutoSpinEnabled
-                    ? "animate-spin"
-                    : ""
-                }`}
-              />
-            ) : (
-              <ArrowDownFromLine />
-            )}
-          </button>
+          <div className="flex gap-2 h-full">
+            <button
+              className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square"
+              {...backspaceLongPress}
+              disabled={
+                spinningColumns.some((x) => x === true) && !isAutoSpinEnabled
+              }
+            >
+              {!hasWon || spinningColumns.some((x) => x === true) ? (
+                <RefreshCcw
+                  className={`opacity-100 ${
+                    spinningColumns.some((x) => x === true) || isAutoSpinEnabled
+                      ? "animate-spin"
+                      : ""
+                  }`}
+                />
+              ) : (
+                <ArrowDownFromLine />
+              )}
+            </button>
+            {hasWon &&
+              !spinningColumns.some((x) => x === true) &&
+              !isAutoSpinEnabled && (
+                <button
+                  className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-2/3 aspect-square"
+                  onClick={openDoubleWinAmountModal}
+                >
+                  <p className="flex items-baseline gap-[10%] font-semibold">
+                    <span className="text-base">X</span>
+                    <span className="text-2xl">2</span>
+                  </p>
+                </button>
+              )}
+          </div>
         )}
         {!isMobile && (
           <div className="flex flex-col  h-full gap-[1%] relative min-w-[15%]">
@@ -174,10 +189,6 @@ export const SlotMachineFooter = ({
                   <button
                     className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-2/3 aspect-square"
                     onClick={openDoubleWinAmountModal}
-                    disabled={
-                      spinningColumns.some((x) => x === true) ||
-                      isButtonDisabled
-                    }
                   >
                     <p className="flex items-baseline gap-[10%] font-semibold">
                       <span className="text-base">X</span>
