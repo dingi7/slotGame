@@ -1,9 +1,10 @@
+import useModal, { ModalTypes } from "../hooks/useModal";
+
 import { DoubleWinAmountModal } from "./modals/DoubleWinAmountModal";
 import { InsufficientFundsModal } from "./modals/InsufficientFundsModal";
 import { SlotMachineCanvas } from "./SlotMachineCanvas";
 import { SlotMachineFooter } from "./SlotMachineFooter";
 import slotBackground from "../assets/background.png";
-import useModal from "../hooks/useModal";
 import { useSlotMachine } from "../hooks/useSlotMachineState";
 
 export const SlotMachine: React.FC = () => {
@@ -25,7 +26,7 @@ export const SlotMachine: React.FC = () => {
     balance,
     isButtonDisabled,
     handleBetAmountChange,
-    hasHandledWin,
+    hasWon,
     payoutsHandler,
     tempWinning,
     winningMatrix,
@@ -46,7 +47,7 @@ export const SlotMachine: React.FC = () => {
         <DoubleWinAmountModal
           betAmmount={tempWinning}
           payoutsHandler={payoutsHandler}
-          closeModal={() => closeModal("doubleWinAmountModal")}
+          closeModal={() => closeModal(ModalTypes.DoubleWinAmountModal)}
         />
       )}
 
@@ -66,7 +67,7 @@ export const SlotMachine: React.FC = () => {
           slotHeight={slotHeight}
           totalHeight={totalHeight}
           winningMatrix={winningMatrix}
-          hasHandledWin={hasHandledWin}
+          hasHandledWin={hasWon}
           tempWinning={tempWinning}
         />
 
@@ -108,10 +109,12 @@ export const SlotMachine: React.FC = () => {
         fixedBetAmounts={fixedBetAmounts}
         isButtonDisabled={isButtonDisabled}
         handleBetAmountChange={handleBetAmountChange}
-        openDoubleWinAmountModal={() => openModal("doubleWinAmountModal")}
-        hasHandledWin={hasHandledWin}
-        openOptionsModal={() => openModal("optionsModal")}
-        closeOptionsModal={() => closeModal("optionsModal")}
+        openDoubleWinAmountModal={() =>
+          openModal(ModalTypes.DoubleWinAmountModal)
+        }
+        hasWon={hasWon}
+        openOptionsModal={() => openModal(ModalTypes.OptionsModal)}
+        closeOptionsModal={() => closeModal(ModalTypes.OptionsModal)}
         isOptionsModalOpen={isModalOpen.optionsModal}
         payoutsHandler={payoutsHandler}
         tempWinning={tempWinning}

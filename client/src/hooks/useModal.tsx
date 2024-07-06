@@ -17,7 +17,7 @@ export type ModalState =
 
 const useModal = () => {
   const [isModalOpen, setIsModalOpen] = useState({
-    win: false,
+
     insufficientFunds: false,
     doubleWinAmountModal: false,
     optionsModal: false,
@@ -34,7 +34,6 @@ const useModal = () => {
     if (!modal) {
       // Close all modals
       setIsModalOpen({
-        win: false,
         insufficientFunds: false,
         doubleWinAmountModal: false,
         optionsModal: false,

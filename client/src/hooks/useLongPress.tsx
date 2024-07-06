@@ -67,11 +67,13 @@ export default function useLongPress(
     onMouseLeave: () => {
       handleClickEnd();
     },
-    onTouchStart: () => {
+    onTouchStart: (event: React.TouchEvent) => {
+      event.preventDefault();
       setStartLongPress(true);
       setStartTime(new Date());
     },
-    onTouchEnd: () => {
+    onTouchEnd: (event: React.TouchEvent) => {
+      event.preventDefault();
       handleClickEnd();
     },
   };

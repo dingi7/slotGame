@@ -16,7 +16,7 @@ export const SlotMachineFooter = ({
   handleBetAmountChange,
   openDoubleWinAmountModal,
   openOptionsModal,
-  hasHandledWin,
+  hasWon,
   closeOptionsModal,
   isOptionsModalOpen,
   payoutsHandler,
@@ -35,7 +35,7 @@ export const SlotMachineFooter = ({
   isButtonDisabled: boolean;
   handleBetAmountChange: (number: number) => void;
   openDoubleWinAmountModal: () => void;
-  hasHandledWin: boolean;
+  hasWon: boolean;
   openOptionsModal: () => void;
   closeOptionsModal: () => void;
   isOptionsModalOpen: boolean;
@@ -44,18 +44,16 @@ export const SlotMachineFooter = ({
   isAutoSpinEnabled: boolean;
   setIsAutoSpinEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-
-
   const onShortClick = () => {
     if (isAutoSpinEnabled) {
       setIsAutoSpinEnabled(false);
       return;
     }
-    if (hasHandledWin) {
+    if (!hasWon) {
       startSpinning();
       return;
-    } 
-    if(!hasHandledWin && !isAutoSpinEnabled) {
+    }
+    if (hasWon && !isAutoSpinEnabled) {
       payoutsHandler(tempWinning);
     }
   };
@@ -81,7 +79,6 @@ export const SlotMachineFooter = ({
           <p className="uppercase font-semibold">balance:</p>
           <p>{balance} BGN</p>
         </div>
-
         {!isMobile && (
           <div className=" flex flex-col gap-2 relative">
             <p className="uppercase text-xs text-slate-300 absolute -top-5 left-1/2 -translate-x-[50%]">
@@ -113,40 +110,33 @@ export const SlotMachineFooter = ({
         >
           <Landmark />
         </button>
-
         <OptionsModal
           closeModal={closeOptionsModal}
           isOpen={isOptionsModalOpen}
           handleBetAmountChange={handleBetAmountChange}
         />
 
-        {isMobile &&
-          (hasHandledWin ? (
-            <button
-              className=" bg-stone-900/50 p-[2.5%]  h-full aspect-square flex justify-center items-center rounded-full border-2 border-slate-200 "
-              onClick={startSpinning}
-              disabled={
-                spinningColumns.some((x) => x === true) || isButtonDisabled
-              }
-            >
+        {isMobile && (
+          <button
+            className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square"
+            {...backspaceLongPress}
+            disabled={
+              spinningColumns.some((x) => x === true) && !isAutoSpinEnabled
+            }
+          >
+            {!hasWon || spinningColumns.some((x) => x === true) ? (
               <RefreshCcw
                 className={`opacity-100 ${
-                  spinningColumns.some((x) => x === true) ? "animate-spin" : ""
+                  spinningColumns.some((x) => x === true) || isAutoSpinEnabled
+                    ? "animate-spin"
+                    : ""
                 }`}
               />
-            </button>
-          ) : (
-            <button
-              className=" bg-stone-900/50 p-[2.5%]  h-full aspect-square flex justify-center items-center rounded-full border-2 border-slate-200 "
-              onClick={() => payoutsHandler(tempWinning)}
-              disabled={
-                spinningColumns.some((x) => x === true) || isButtonDisabled
-              }
-            >
+            ) : (
               <ArrowDownFromLine />
-            </button>
-          ))}
-
+            )}
+          </button>
+        )}
         {!isMobile && (
           <div className="flex flex-col  h-full gap-[1%] relative min-w-[15%]">
             <div className="flex justify-between items-center h-full gap-[4%] pb-[12%] pl-[20%]">
@@ -154,12 +144,10 @@ export const SlotMachineFooter = ({
                 className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-full aspect-square"
                 {...backspaceLongPress}
                 disabled={
-                  (spinningColumns.some((x) => x === true) &&
-                    !isAutoSpinEnabled) ||
-                  isButtonDisabled
+                  spinningColumns.some((x) => x === true) && !isAutoSpinEnabled
                 }
               >
-                {hasHandledWin ? (
+                {!hasWon || spinningColumns.some((x) => x === true) ? (
                   <RefreshCcw
                     className={`opacity-100 ${
                       spinningColumns.some((x) => x === true) ||
@@ -173,27 +161,29 @@ export const SlotMachineFooter = ({
                 )}
               </button>
 
-              {!hasHandledWin && !isAutoSpinEnabled && (
-                <button
-                  className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-2/3 aspect-square"
-                  onClick={openDoubleWinAmountModal}
-                  disabled={
-                    spinningColumns.some((x) => x === true) || isButtonDisabled
-                  }
-                >
-                  <p className="flex items-baseline gap-[10%] font-semibold">
-                    <span className="text-base">X</span>
-                    <span className="text-2xl">2</span>
-                  </p>
-                </button>
-              )}
+              {hasWon &&
+                !spinningColumns.some((x) => x === true) &&
+                !isAutoSpinEnabled && (
+                  <button
+                    className="flex justify-center items-center bg-stone-900/50 p-[1%] rounded-full border-2 border-slate-200 h-2/3 aspect-square"
+                    onClick={openDoubleWinAmountModal}
+                    disabled={
+                      spinningColumns.some((x) => x === true) ||
+                      isButtonDisabled
+                    }
+                  >
+                    <p className="flex items-baseline gap-[10%] font-semibold">
+                      <span className="text-base">X</span>
+                      <span className="text-2xl">2</span>
+                    </p>
+                  </button>
+                )}
             </div>
             <p className="text-neutral-300/50 absolute bottom-0 left-0 w-full text-nowrap">
               hold for auto spin
             </p>
           </div>
         )}
-
         <div className="uppercase">
           <p className="font-semibold">last win:</p>
           <p>{lastWin}</p>

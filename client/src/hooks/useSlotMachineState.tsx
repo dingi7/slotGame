@@ -7,7 +7,7 @@ import {
   Reels,
 } from "../types/slotMachineTypes";
 import { playSound, stopSound } from "../utils/soundPlayer";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ModalState } from "./useModal";
 import { ModalTypes } from "./useModal";
@@ -29,33 +29,24 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
   const columnsCount = 3;
   const rowsCount = 3;
   const frameRate = 10;
-  const btnDissableDuration = 1000; // 3 sec
+  const btnDissableDuration = 200;
   const minSpinTimes = 10;
   const minIconsToBeMoved = 3;
   const isMobile = windowWidth <= 768;
   const slotHeight = windowWidth * 0.1 * (isMobile ? 2 : 1);
   const totalHeight = slotHeight * 3;
   const [spinIntervalDuration] = useState(60);
-  const [hasHandledWin, setHasHandledWin] = useState<boolean>(true);
   const [isAutoSpinEnabled, setIsAutoSpinEnabled] = useState<boolean>(false);
 
   const betOptions: { [key: number]: number[] } = {
-    // Adjust the bet options here
     1: [1, 2, 3, 4, 5],
     2: [5, 10, 15, 20, 25],
     3: [10, 20, 30, 40, 50],
     4: [20, 40, 60, 80, 100],
   };
-
   const [fixedBetAmounts, setFixedBetAmounts] = useState<number[]>(
     betOptions[1]
   );
-
-  const handleBetAmountChange = (betOption: number) => {
-    setFixedBetAmounts(betOptions[betOption]);
-  };
-
-  const tickers: PIXI.Ticker[] = Array(columnsCount).fill(new PIXI.Ticker());
 
   const [betAmount, setBetAmount] = useState(fixedBetAmounts[0]);
   const [spinningReels, setSpinningReels] = useState(Array(3).fill(false));
@@ -68,9 +59,14 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
   const [desiredIconsKey, setDesiredIconsKey] = useState<number[][]>();
   const [tempWinning, setTempWinning] = useState<number>(0);
   const [hasWon, setHasWon] = useState<boolean>(false);
+  //const [hasHandledWin, setHasHandledWin] = useState<boolean>(true);
 
   const [winningMatrix, setWinningMatrix] = useState<boolean[][]>([]);
 
+  const tickers: PIXI.Ticker[] = Array(columnsCount).fill(new PIXI.Ticker());
+  const handleBetAmountChange = (betOption: number) => {
+    setFixedBetAmounts(betOptions[betOption]);
+  };
   useEffect(() => {
     if (!desiredIconsKey) {
       return;
@@ -120,22 +116,20 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
   };
 
   const payoutsHandler = (amount: number) => {
-    if (!hasHandledWin) {
+    if (hasWon) {
       if (amount !== Payouts.none) {
         setBalance((prevBalance) => prevBalance + amount);
         setLastWin(amount);
       }
 
-      setHasHandledWin(true);
+      //setHasHandledWin(true);
       setHasWon(false);
     }
   };
 
   const startSpinning = async () => {
-
-
     setHasWon(false);
-    setHasHandledWin(true);
+    //setHasHandledWin(true);
     closeModal();
     if (balance - betAmount < 0) {
       openModal(ModalTypes.InsufficientFunds);
@@ -190,7 +184,6 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
       setShowLine((prevShowLine) => !prevShowLine);
     }, intervalDuration);
 
-
     setTimeout(() => {
       clearInterval(intervalId);
       setShowLine(false);
@@ -199,37 +192,35 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
 
   useEffect(() => {
     const allStopped = reelStates.every((column) => column.spinning === false);
-    if (allStopped) {
-      stopSound();
+    if (!allStopped) {
+      return;
     }
-    if (allStopped && hasWon) {
+
+    stopSound();
+    if (hasWon) {
       setIsButtonDisabled(true);
-      setHasHandledWin(false);
       playSound(winSound);
 
       // Immediately show the line without waiting
       toggleLine();
 
       setTimeout(() => {
-        openModal(ModalTypes.Win);
-      }, spinIntervalDuration);
-
-      setTimeout(() => {
         setIsButtonDisabled(false);
       }, btnDissableDuration);
+
     }
 
-    if (allStopped && isAutoSpinEnabled && !hasHandledWin) {
-      payoutsHandler(tempWinning);
-    }
-
-    if (allStopped && hasHandledWin && isAutoSpinEnabled) {
+    if (isAutoSpinEnabled) {
       const interval = hasWon ? 3000 : 500;
       setTimeout(() => {
+        if (hasWon) {
+          payoutsHandler(tempWinning);
+          setHasWon(false);
+        }
         startSpinning();
       }, interval);
     }
-  }, [reelStates, hasWon, hasHandledWin, isAutoSpinEnabled]);
+  }, [reelStates, hasWon, isAutoSpinEnabled]);
 
   useEffect(() => {
     if (spinningReels.some((spinning) => spinning)) {
@@ -334,7 +325,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
     handleBetAmountChange,
     openModal,
     closeModal,
-    hasHandledWin,
+    hasWon,
     payoutsHandler,
     tempWinning,
     winningMatrix,
