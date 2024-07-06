@@ -45,7 +45,7 @@ export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
           powerPreference: powerPreference,
           sharedTicker: true,
           autoStart: true,
-          autoDensity: false,
+          autoDensity: true,
         }}
         width={windowWidth * 0.391 * (isMobile ? 2 : 1)}
         height={totalHeight}
