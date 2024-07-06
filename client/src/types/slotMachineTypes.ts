@@ -8,4 +8,8 @@ export type ReelStateType = {
   spinning: boolean;
 };
 
+export enum Payouts {
+  none = 0
+}
+
 export type Reels = [ReelStateType, ReelStateType, ReelStateType];

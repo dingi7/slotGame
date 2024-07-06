@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import AceBlack from '../../assets/AceBlack.png';
 import AceRed from '../../assets/AceRed.png';
+import { Payouts } from '../../types/slotMachineTypes';
 import blackCard from '../../assets/blackCard.png';
 import lossText from '../../assets/loss.png';
 import redCard from '../../assets/redCard.png';
@@ -48,6 +49,7 @@ export const DoubleWinAmountModal = ({
         } else {
             const otherChoice = clickedChoice === 0 ? 1 : 0;
             setSelectedCard(cardFronts[otherChoice]);
+             payoutsHandler(Payouts.none);
         }
         setHasHandled(true);
         setTimeout(() => {

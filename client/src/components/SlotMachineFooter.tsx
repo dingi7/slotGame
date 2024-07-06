@@ -58,7 +58,9 @@ export const SlotMachineFooter = ({
     }
     if (hasHandledWin) {
       startSpinning();
-    } else {
+      return;
+    } 
+    if(!hasHandledWin && !isAutoSpinEnabled) {
       payoutsHandler(tempWinning);
     }
   };

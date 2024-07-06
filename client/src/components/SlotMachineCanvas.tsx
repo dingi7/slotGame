@@ -64,12 +64,12 @@ export const SlotMachineCanvas: React.FC<SlotMachineCanvasProps> = ({
         ))}
         {showLine && (
           <Graphics
+          //@ts-ignore
             draw={(g: PIXI.Graphics) =>
               drawWinningLines(
                 g,
                 slotHeight,
                 windowWidth * (isMobile ? 2 : 1),
-                isMobile,
                 winningMatrix
               )
             }

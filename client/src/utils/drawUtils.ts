@@ -94,7 +94,6 @@ export const drawWinningLines = (
   graphics: PIXI.Graphics,
   slotHeight: number,
   windowWidth: number,
-  isMobile: boolean,
   winningMatrix: boolean[][]
 ) => {
   graphics.clear();

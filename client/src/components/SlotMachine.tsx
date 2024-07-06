@@ -2,7 +2,6 @@ import { DoubleWinAmountModal } from "./modals/DoubleWinAmountModal";
 import { InsufficientFundsModal } from "./modals/InsufficientFundsModal";
 import { SlotMachineCanvas } from "./SlotMachineCanvas";
 import { SlotMachineFooter } from "./SlotMachineFooter";
-import { WinningModal } from "./modals/WinningModal";
 import slotBackground from "../assets/background.png";
 import useModal from "../hooks/useModal";
 import { useSlotMachine } from "../hooks/useSlotMachineState";

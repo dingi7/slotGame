@@ -36,18 +36,15 @@ export const SlotReel: React.FC<SlotColumnProps> = ({
       y={-slotHeight}
       key={colIndex}
     >
-      {/* <Graphics
-        draw={(g: PIXI.Graphics) =>
-          drawRect(g, windowWidth, slotHeight, isMobile)
-        }
-      /> */}
       <Graphics
+        //@ts-ignore
         draw={(g: PIXI.Graphics) =>
           drawRectBackground(g, windowWidth, slotHeight, isMobile)
         }
       />
 
       <Graphics
+        //@ts-ignore
         draw={(g: PIXI.Graphics) =>
           drawRectBorder(g, windowWidth, slotHeight, isMobile)
         }
