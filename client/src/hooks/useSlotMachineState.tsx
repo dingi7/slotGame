@@ -6,7 +6,7 @@ import {
   ReelStateType,
   Reels,
 } from "../types/slotMachineTypes";
-import { playSound, stopSound } from "../utils/soundPlayer";
+import { SoundTypes, playSound, stopSound } from "../utils/soundPlayer";
 import { useEffect, useRef, useState } from "react";
 
 import { ModalState } from "./useModal";
@@ -14,8 +14,6 @@ import { ModalTypes } from "./useModal";
 import { assets } from "../assets/reelAssets";
 import { initializeAssetsMatrix } from "../utils/slotMachineUtils";
 import { sendSpinRequest } from "../api/requests";
-import spinningSound from "../assets/spinning.wav";
-import winSound from "../assets/win.wav";
 
 type ReelIndex = 0 | 1 | 2;
 
@@ -37,7 +35,9 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
   const totalHeight = slotHeight * 3;
   const [spinIntervalDuration] = useState(60);
   const [isAutoSpinEnabled, setIsAutoSpinEnabled] = useState<boolean>(false);
-  const autoSpinIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const autoSpinIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
 
   const betOptions: { [key: number]: number[] } = {
     1: [1, 2, 3, 4, 5],
@@ -152,7 +152,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
       },
     ]);
 
-    playSound(spinningSound);
+    playSound(SoundTypes.spinning);
     setReelStates(
       (prevStates) =>
         prevStates.map((state) => ({
@@ -197,22 +197,25 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
       return;
     }
 
-    stopSound();
+    stopSound(SoundTypes.spinning);
     if (hasWon) {
       setIsButtonDisabled(true);
-      playSound(winSound);
+      playSound(SoundTypes.win);
 
       toggleLine();
     }
 
     if (isAutoSpinEnabled) {
-      autoSpinIntervalRef.current = setTimeout(() => {
-        if (hasWon) {
-          payoutsHandler(tempWinning);
-          setHasWon(false);
-        }
-        startSpinning();
-      }, hasWon ? 3000 : 500);
+      autoSpinIntervalRef.current = setTimeout(
+        () => {
+          if (hasWon) {
+            payoutsHandler(tempWinning);
+            setHasWon(false);
+          }
+          startSpinning();
+        },
+        hasWon ? 3000 : 500
+      );
     }
   }, [reelStates, hasWon, isAutoSpinEnabled]);
 
@@ -256,6 +259,9 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
                     const newSpinningReels = [...prev];
                     newSpinningReels[reelIndex] = false;
                     tickers[reelIndex].stop();
+                    stopSound(SoundTypes.spinning);
+                    playSound(SoundTypes.columnStop);
+                    stopSound(SoundTypes.spinning);
                     setReelIcons(Array(columnsCount).fill(0));
                     return newSpinningReels;
                   });
@@ -325,6 +331,6 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
     winningMatrix,
     isAutoSpinEnabled,
     setIsAutoSpinEnabled,
-    autoSpinIntervalRef
+    autoSpinIntervalRef,
   };
 };
