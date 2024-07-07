@@ -261,7 +261,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
                     tickers[reelIndex].stop();
                     stopSound(SoundTypes.spinning);
                     playSound(SoundTypes.columnStop);
-                    stopSound(SoundTypes.spinning);
+                    playSound(SoundTypes.spinning);
                     setReelIcons(Array(columnsCount).fill(0));
                     return newSpinningReels;
                   });
