@@ -27,7 +27,6 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
   const columnsCount = 3;
   const rowsCount = 3;
   const frameRate = import.meta.env.VITE_ENVIRONMENT === "DEVELOPMENT" ? 6 : 3;
-  const btnDissableDuration = 200;
   const minSpinTimes = 10;
   const minIconsToBeMoved = 3;
   const isMobile = windowWidth <= 768;
