@@ -28,7 +28,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
   const windowWidth = window.innerWidth;
   const columnsCount = 3;
   const rowsCount = 3;
-  const frameRate = 10;
+  const frameRate = import.meta.env.VITE_ENVIRONMENT === "DEVELOPMENT" ? 6 : 3;
   const btnDissableDuration = 200;
   const minSpinTimes = 10;
   const minIconsToBeMoved = 3;
@@ -37,7 +37,9 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
   const totalHeight = slotHeight * 3;
   const [spinIntervalDuration] = useState(60);
   const [isAutoSpinEnabled, setIsAutoSpinEnabled] = useState<boolean>(false);
-  const autoSpinIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const autoSpinIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
 
   const betOptions: { [key: number]: number[] } = {
     1: [1, 2, 3, 4, 5],
@@ -206,13 +208,16 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
     }
 
     if (isAutoSpinEnabled) {
-      autoSpinIntervalRef.current = setTimeout(() => {
-        if (hasWon) {
-          payoutsHandler(tempWinning);
-          setHasWon(false);
-        }
-        startSpinning();
-      }, hasWon ? 3000 : 500);
+      autoSpinIntervalRef.current = setTimeout(
+        () => {
+          if (hasWon) {
+            payoutsHandler(tempWinning);
+            setHasWon(false);
+          }
+          startSpinning();
+        },
+        hasWon ? 3000 : 500
+      );
     }
   }, [reelStates, hasWon, isAutoSpinEnabled]);
 
@@ -325,6 +330,6 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
     winningMatrix,
     isAutoSpinEnabled,
     setIsAutoSpinEnabled,
-    autoSpinIntervalRef
+    autoSpinIntervalRef,
   };
 };
