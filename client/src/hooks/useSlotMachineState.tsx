@@ -6,7 +6,7 @@ import {
   ReelStateType,
   Reels,
 } from "../types/slotMachineTypes";
-import { playSound, stopSound } from "../utils/soundPlayer";
+import { SoundTypes, playSound, stopSound } from "../utils/soundPlayer";
 import { useEffect, useRef, useState } from "react";
 
 import { ModalState } from "./useModal";
@@ -14,8 +14,6 @@ import { ModalTypes } from "./useModal";
 import { assets } from "../assets/reelAssets";
 import { initializeAssetsMatrix } from "../utils/slotMachineUtils";
 import { sendSpinRequest } from "../api/requests";
-import spinningSound from "../assets/spinning.wav";
-import winSound from "../assets/win.wav";
 
 type ReelIndex = 0 | 1 | 2;
 
@@ -154,7 +152,7 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
       },
     ]);
 
-    playSound(spinningSound);
+    playSound(SoundTypes.spinning);
     setReelStates(
       (prevStates) =>
         prevStates.map((state) => ({
@@ -199,10 +197,10 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
       return;
     }
 
-    stopSound();
+    stopSound(SoundTypes.spinning);
     if (hasWon) {
       setIsButtonDisabled(true);
-      playSound(winSound);
+      playSound(SoundTypes.win);
 
       toggleLine();
     }
@@ -261,6 +259,9 @@ export const useSlotMachine = ({ openModal, closeModal }: SlotMachineProps) => {
                     const newSpinningReels = [...prev];
                     newSpinningReels[reelIndex] = false;
                     tickers[reelIndex].stop();
+                    stopSound(SoundTypes.spinning);
+                    playSound(SoundTypes.columnStop);
+                    playSound(SoundTypes.spinning);
                     setReelIcons(Array(columnsCount).fill(0));
                     return newSpinningReels;
                   });
